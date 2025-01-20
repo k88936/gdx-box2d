@@ -1,18 +1,87 @@
 package com.badlogic.gdx.box2d;
 
-import com.badlogic.gdx.box2d.Box2d_Internal.*;
-import com.badlogic.gdx.box2d.enums.b2BodyType;
-import com.badlogic.gdx.box2d.enums.b2JointType;
-import com.badlogic.gdx.box2d.enums.b2ShapeType;
-import com.badlogic.gdx.box2d.structs.*;
 import com.badlogic.gdx.jnigen.loader.SharedLibraryLoader;
-import com.badlogic.gdx.jnigen.runtime.CHandler;
 import com.badlogic.gdx.jnigen.runtime.c.CXXException;
-import com.badlogic.gdx.jnigen.runtime.closure.Closure;
 import com.badlogic.gdx.jnigen.runtime.closure.ClosureObject;
+import com.badlogic.gdx.jnigen.runtime.CHandler;
 import com.badlogic.gdx.jnigen.runtime.pointer.CSizedIntPointer;
+import com.badlogic.gdx.box2d.structs.b2Version;
+import com.badlogic.gdx.box2d.structs.b2CosSin;
+import com.badlogic.gdx.box2d.structs.b2Vec2;
 import com.badlogic.gdx.jnigen.runtime.pointer.FloatPointer;
+import com.badlogic.gdx.box2d.structs.b2Rot;
+import com.badlogic.gdx.box2d.structs.b2Transform;
+import com.badlogic.gdx.box2d.structs.b2Mat22;
+import com.badlogic.gdx.box2d.structs.b2AABB;
+import com.badlogic.gdx.box2d.structs.b2RayCastInput;
+import com.badlogic.gdx.box2d.structs.b2Polygon;
+import com.badlogic.gdx.box2d.structs.b2Hull;
+import com.badlogic.gdx.box2d.structs.b2MassData;
+import com.badlogic.gdx.box2d.structs.b2Circle;
+import com.badlogic.gdx.box2d.structs.b2Capsule;
+import com.badlogic.gdx.box2d.structs.b2Segment;
+import com.badlogic.gdx.box2d.structs.b2CastOutput;
+import com.badlogic.gdx.box2d.structs.b2ShapeCastInput;
+import com.badlogic.gdx.box2d.structs.b2SegmentDistanceResult;
+import com.badlogic.gdx.box2d.structs.b2DistanceOutput;
+import com.badlogic.gdx.box2d.structs.b2SimplexCache;
+import com.badlogic.gdx.box2d.structs.b2DistanceInput;
+import com.badlogic.gdx.box2d.structs.b2Simplex;
+import com.badlogic.gdx.box2d.structs.b2ShapeCastPairInput;
+import com.badlogic.gdx.box2d.structs.b2ShapeProxy;
+import com.badlogic.gdx.box2d.structs.b2Sweep;
+import com.badlogic.gdx.box2d.structs.b2TOIOutput;
+import com.badlogic.gdx.box2d.structs.b2TOIInput;
+import com.badlogic.gdx.box2d.structs.b2Manifold;
+import com.badlogic.gdx.box2d.structs.b2ChainSegment;
+import com.badlogic.gdx.box2d.structs.b2DynamicTree;
+import com.badlogic.gdx.box2d.structs.b2TreeStats;
 import com.badlogic.gdx.jnigen.runtime.pointer.VoidPointer;
+import com.badlogic.gdx.box2d.structs.b2BodyId;
+import com.badlogic.gdx.box2d.structs.b2ShapeId;
+import com.badlogic.gdx.box2d.structs.b2ChainId;
+import com.badlogic.gdx.box2d.structs.b2JointId;
+import com.badlogic.gdx.box2d.structs.b2WorldDef;
+import com.badlogic.gdx.box2d.structs.b2BodyDef;
+import com.badlogic.gdx.box2d.structs.b2Filter;
+import com.badlogic.gdx.box2d.structs.b2QueryFilter;
+import com.badlogic.gdx.box2d.structs.b2ShapeDef;
+import com.badlogic.gdx.box2d.structs.b2ChainDef;
+import com.badlogic.gdx.box2d.structs.b2DistanceJointDef;
+import com.badlogic.gdx.box2d.structs.b2MotorJointDef;
+import com.badlogic.gdx.box2d.structs.b2MouseJointDef;
+import com.badlogic.gdx.box2d.structs.b2NullJointDef;
+import com.badlogic.gdx.box2d.structs.b2PrismaticJointDef;
+import com.badlogic.gdx.box2d.structs.b2RevoluteJointDef;
+import com.badlogic.gdx.box2d.structs.b2WeldJointDef;
+import com.badlogic.gdx.box2d.structs.b2WheelJointDef;
+import com.badlogic.gdx.box2d.structs.b2ExplosionDef;
+import com.badlogic.gdx.box2d.structs.b2DebugDraw;
+import com.badlogic.gdx.box2d.structs.b2WorldId;
+import com.badlogic.gdx.box2d.structs.b2BodyEvents;
+import com.badlogic.gdx.box2d.structs.b2SensorEvents;
+import com.badlogic.gdx.box2d.structs.b2ContactEvents;
+import com.badlogic.gdx.box2d.structs.b2RayResult;
+import com.badlogic.gdx.box2d.structs.b2Profile;
+import com.badlogic.gdx.box2d.structs.b2Counters;
+import com.badlogic.gdx.box2d.enums.b2BodyType;
+import com.badlogic.gdx.box2d.structs.b2ContactData;
+import com.badlogic.gdx.box2d.enums.b2ShapeType;
+import com.badlogic.gdx.box2d.enums.b2JointType;
+import com.badlogic.gdx.jnigen.runtime.closure.Closure;
+import com.badlogic.gdx.box2d.Box2d_Internal.b2OverlapResultFcn_Internal;
+import com.badlogic.gdx.box2d.Box2d_Internal.b2TreeQueryCallbackFcn_Internal;
+import com.badlogic.gdx.box2d.Box2d_Internal.b2TaskCallback_Internal;
+import com.badlogic.gdx.box2d.Box2d_Internal.b2EnqueueTaskCallback_Internal;
+import com.badlogic.gdx.box2d.Box2d_Internal.b2CastResultFcn_Internal;
+import com.badlogic.gdx.box2d.Box2d_Internal.b2TreeShapeCastCallbackFcn_Internal;
+import com.badlogic.gdx.box2d.Box2d_Internal.b2PreSolveFcn_Internal;
+import com.badlogic.gdx.box2d.Box2d_Internal.b2AllocFcn_Internal;
+import com.badlogic.gdx.box2d.Box2d_Internal.b2AssertFcn_Internal;
+import com.badlogic.gdx.box2d.Box2d_Internal.b2CustomFilterFcn_Internal;
+import com.badlogic.gdx.box2d.Box2d_Internal.b2TreeRayCastCallbackFcn_Internal;
+import com.badlogic.gdx.box2d.Box2d_Internal.b2FreeFcn_Internal;
+import com.badlogic.gdx.box2d.Box2d_Internal.b2FinishTaskCallback_Internal;
 
 @SuppressWarnings("unused")
 public final class Box2d {
@@ -74,7 +143,6 @@ static jclass cxxExceptionClass = NULL;
 
     /**
      * Override the default assert callback
-     *
      * @param assertFcn a non-null assert callback
      */
     public static void b2SetAssertFcn(ClosureObject<b2AssertFcn> assertFcn) {
@@ -117,52 +185,53 @@ static jclass cxxExceptionClass = NULL;
     	return 0;
     */
 
-    public static b2Timer b2CreateTimer() {
-        return new b2Timer(b2CreateTimer_internal(), true);
+    /**
+     * Get the absolute number of system ticks. The value is platform specific.
+     */
+    public static long b2GetTicks() {
+        return b2GetTicks_internal();
     }
 
-    static private native long b2CreateTimer_internal();/*
+    static private native long b2GetTicks_internal();/*
     	HANDLE_JAVA_EXCEPTION_START()
-    	b2Timer* _ret = (b2Timer*)malloc(sizeof(b2Timer));
-    	*_ret = b2CreateTimer();
-    	return (jlong)_ret;
+    	return (jlong)b2GetTicks();
     	HANDLE_JAVA_EXCEPTION_END()
     	return 0;
     */
 
-    public static float b2GetMilliseconds(b2Timer.b2TimerPointer timer) {
-        return b2GetMilliseconds_internal(timer.getPointer());
+    /**
+     * Get the milliseconds passed from an initial tick value.
+     */
+    public static float b2GetMilliseconds(long ticks) {
+        return b2GetMilliseconds_internal(ticks);
     }
 
-    static private native float b2GetMilliseconds_internal(long timer);/*
+    static private native float b2GetMilliseconds_internal(long ticks);/*
     	HANDLE_JAVA_EXCEPTION_START()
-    	return (jfloat)b2GetMilliseconds((const b2Timer *)timer);
+    	CHECK_AND_THROW_C_TYPE(env, uint64_t, ticks, 0, return 0);
+    	return (jfloat)b2GetMilliseconds((uint64_t)ticks);
     	HANDLE_JAVA_EXCEPTION_END()
     	return 0;
     */
 
-    public static float b2GetMillisecondsAndReset(b2Timer.b2TimerPointer timer) {
-        return b2GetMillisecondsAndReset_internal(timer.getPointer());
+    /**
+     * Get the milliseconds passed from an initial tick value.
+     */
+    public static float b2GetMillisecondsAndReset(CSizedIntPointer ticks) {
+        ticks.assertHasCTypeBacking("uint64_t");
+        return b2GetMillisecondsAndReset_internal(ticks.getPointer());
     }
 
-    static private native float b2GetMillisecondsAndReset_internal(long timer);/*
+    static private native float b2GetMillisecondsAndReset_internal(long ticks);/*
     	HANDLE_JAVA_EXCEPTION_START()
-    	return (jfloat)b2GetMillisecondsAndReset((b2Timer *)timer);
+    	return (jfloat)b2GetMillisecondsAndReset((uint64_t *)ticks);
     	HANDLE_JAVA_EXCEPTION_END()
     	return 0;
     */
 
-    public static void b2SleepMilliseconds(int milliseconds) {
-        b2SleepMilliseconds_internal(milliseconds);
-    }
-
-    static private native void b2SleepMilliseconds_internal(int milliseconds);/*
-    	HANDLE_JAVA_EXCEPTION_START()
-    	CHECK_AND_THROW_C_TYPE(env, int, milliseconds, 0, return);
-    	b2SleepMilliseconds((int)milliseconds);
-    	HANDLE_JAVA_EXCEPTION_END()
-    */
-
+    /**
+     * Yield to be used in a busy loop.
+     */
     public static void b2Yield() {
         b2Yield_internal();
     }
@@ -308,10 +377,10 @@ static jclass cxxExceptionClass = NULL;
     */
 
     /**
-     * Compute an approximate arctangent in the range [-pi, pi]
-     * This is hand coded for cross-platform determinism. The atan2f
-     * function in the standard library is not cross-platform deterministic.
-     * Accurate to around 0.0023 degrees
+     *  Compute an approximate arctangent in the range [-pi, pi]
+     *  This is hand coded for cross-platform determinism. The atan2f
+     *  function in the standard library is not cross-platform deterministic.
+     * 	Accurate to around 0.0023 degrees
      */
     public static float b2Atan2(float y, float x) {
         return b2Atan2_internal(y, x);
@@ -704,9 +773,8 @@ static jclass cxxExceptionClass = NULL;
     */
 
     /**
-     * Integration rotation from angular velocity
-     *
-     * @param q1         initial rotation
+     * Integrate rotation from angular velocity
+     * @param q1 initial rotation
      * @param deltaAngle the angular displacement in radians
      */
     public static b2Rot b2IntegrateRotation(b2Rot q1, float deltaAngle) {
@@ -797,9 +865,9 @@ static jclass cxxExceptionClass = NULL;
     */
 
     /**
-     * Normalized linear interpolation
-     * https://fgiesen.wordpress.com/2012/08/15/linear-interpolation-past-present-and-future/
-     * https://web.archive.org/web/20170825184056/http://number-none.com/product/Understanding%20Slerp,%20Then%20Not%20Using%20It/
+     *  Normalized linear interpolation
+     *  https://fgiesen.wordpress.com/2012/08/15/linear-interpolation-past-present-and-future/
+     * 	https://web.archive.org/web/20170825184056/http://number-none.com/product/Understanding%20Slerp,%20Then%20Not%20Using%20It/
      */
     public static b2Rot b2NLerp(b2Rot q1, b2Rot q2, float t) {
         return new b2Rot(b2NLerp_internal(q1.getPointer(), q2.getPointer(), t), true);
@@ -816,9 +884,8 @@ static jclass cxxExceptionClass = NULL;
 
     /**
      * Compute the angular velocity necessary to rotate between two rotations over a give time
-     *
-     * @param q1    initial rotation
-     * @param q2    final rotation
+     * @param q1 initial rotation
+     * @param q2 final rotation
      * @param inv_h inverse time step
      */
     public static float b2ComputeAngularVelocity(b2Rot q1, b2Rot q2, float inv_h) {
@@ -1021,7 +1088,7 @@ static jclass cxxExceptionClass = NULL;
      * the transform would first convert p to a point local to frame A, then into a point
      * in the world frame.
      * v2 = A.q.Rot(B.q.Rot(v1) + B.p) + A.p
-     * = (A.q * B.q).Rot(v1) + A.q.Rot(B.p) + A.p
+     *    = (A.q * B.q).Rot(v1) + A.q.Rot(B.p) + A.p
      */
     public static b2Transform b2MulTransforms(b2Transform A, b2Transform B) {
         return new b2Transform(b2MulTransforms_internal(A.getPointer(), B.getPointer()), true);
@@ -1039,7 +1106,7 @@ static jclass cxxExceptionClass = NULL;
     /**
      * Creates a transform that converts a local point in frame B to a local point in frame A.
      * v2 = A.q' * (B.q * v1 + B.p - A.p)
-     * = A.q' * B.q * v1 + A.q' * (B.p - A.p)
+     *    = A.q' * B.q * v1 + A.q' * (B.p - A.p)
      */
     public static b2Transform b2InvMulTransforms(b2Transform A, b2Transform B) {
         return new b2Transform(b2InvMulTransforms_internal(A.getPointer(), B.getPointer()), true);
@@ -1235,7 +1302,6 @@ static jclass cxxExceptionClass = NULL;
      * from Box2D will also be pixels because Box2D does not do any scaling internally.
      * However, you are now on the hook for coming up with good values for gravity, density, and
      * forces.
-     *
      * @warning This must be modified before any calls to Box2D
      */
     public static void b2SetLengthUnitsPerMeter(float lengthUnits) {
@@ -1278,7 +1344,6 @@ static jclass cxxExceptionClass = NULL;
 
     /**
      * Make a convex polygon from a convex hull. This will assert if the hull is not valid.
-     *
      * @warning Do not manually fill in the hull data, it must come directly from b2ComputeHull
      */
     public static b2Polygon b2MakePolygon(b2Hull.b2HullPointer hull, float radius) {
@@ -1296,7 +1361,6 @@ static jclass cxxExceptionClass = NULL;
 
     /**
      * Make an offset convex polygon from a convex hull. This will assert if the hull is not valid.
-     *
      * @warning Do not manually fill in the hull data, it must come directly from b2ComputeHull
      */
     public static b2Polygon b2MakeOffsetPolygon(b2Hull.b2HullPointer hull, b2Vec2 position, b2Rot rotation) {
@@ -1314,7 +1378,6 @@ static jclass cxxExceptionClass = NULL;
 
     /**
      * Make an offset convex polygon from a convex hull. This will assert if the hull is not valid.
-     *
      * @warning Do not manually fill in the hull data, it must come directly from b2ComputeHull
      */
     public static b2Polygon b2MakeOffsetRoundedPolygon(b2Hull.b2HullPointer hull, b2Vec2 position, b2Rot rotation, float radius) {
@@ -1332,7 +1395,6 @@ static jclass cxxExceptionClass = NULL;
 
     /**
      * Make a square polygon, bypassing the need for a convex hull.
-     *
      * @param halfWidth the half-width
      */
     public static b2Polygon b2MakeSquare(float halfWidth) {
@@ -1350,8 +1412,7 @@ static jclass cxxExceptionClass = NULL;
 
     /**
      * Make a box (rectangle) polygon, bypassing the need for a convex hull.
-     *
-     * @param halfWidth  the half-width (x-axis)
+     * @param halfWidth the half-width (x-axis)
      * @param halfHeight the half-height (y-axis)
      */
     public static b2Polygon b2MakeBox(float halfWidth, float halfHeight) {
@@ -1369,10 +1430,9 @@ static jclass cxxExceptionClass = NULL;
 
     /**
      * Make a rounded box, bypassing the need for a convex hull.
-     *
-     * @param halfWidth  the half-width (x-axis)
+     * @param halfWidth the half-width (x-axis)
      * @param halfHeight the half-height (y-axis)
-     * @param radius     the radius of the rounded extension
+     * @param radius the radius of the rounded extension
      */
     public static b2Polygon b2MakeRoundedBox(float halfWidth, float halfHeight, float radius) {
         return new b2Polygon(b2MakeRoundedBox_internal(halfWidth, halfHeight, radius), true);
@@ -1389,11 +1449,10 @@ static jclass cxxExceptionClass = NULL;
 
     /**
      * Make an offset box, bypassing the need for a convex hull.
-     *
-     * @param halfWidth  the half-width (x-axis)
+     * @param halfWidth the half-width (x-axis)
      * @param halfHeight the half-height (y-axis)
-     * @param center     the local center of the box
-     * @param rotation   the local rotation of the box
+     * @param center the local center of the box
+     * @param rotation the local rotation of the box
      */
     public static b2Polygon b2MakeOffsetBox(float halfWidth, float halfHeight, b2Vec2 center, b2Rot rotation) {
         return new b2Polygon(b2MakeOffsetBox_internal(halfWidth, halfHeight, center.getPointer(), rotation.getPointer()), true);
@@ -1410,12 +1469,11 @@ static jclass cxxExceptionClass = NULL;
 
     /**
      * Make an offset rounded box, bypassing the need for a convex hull.
-     *
-     * @param halfWidth  the half-width (x-axis)
+     * @param halfWidth the half-width (x-axis)
      * @param halfHeight the half-height (y-axis)
-     * @param center     the local center of the box
-     * @param rotation   the local rotation of the box
-     * @param radius     the radius of the rounded extension
+     * @param center the local center of the box
+     * @param rotation the local rotation of the box
+     * @param radius the radius of the rounded extension
      */
     public static b2Polygon b2MakeOffsetRoundedBox(float halfWidth, float halfHeight, b2Vec2 center, b2Rot rotation, float radius) {
         return new b2Polygon(b2MakeOffsetRoundedBox_internal(halfWidth, halfHeight, center.getPointer(), rotation.getPointer(), radius), true);
@@ -1738,7 +1796,6 @@ static jclass cxxExceptionClass = NULL;
      * - less than 3 points
      * - more than B2_MAX_POLYGON_VERTICES points
      * This welds close points and removes collinear points.
-     *
      * @warning Do not modify a hull once it has been computed
      */
     public static b2Hull b2ComputeHull(b2Vec2.b2Vec2Pointer points, int count) {
@@ -1747,9 +1804,9 @@ static jclass cxxExceptionClass = NULL;
 
     static private native long b2ComputeHull_internal(long points, int count);/*
     	HANDLE_JAVA_EXCEPTION_START()
-    	CHECK_AND_THROW_C_TYPE(env, int32_t, count, 1, return 0);
+    	CHECK_AND_THROW_C_TYPE(env, int, count, 1, return 0);
     	b2Hull* _ret = (b2Hull*)malloc(sizeof(b2Hull));
-    	*_ret = b2ComputeHull((const b2Vec2 *)points, (int32_t)count);
+    	*_ret = b2ComputeHull((const b2Vec2 *)points, (int)count);
     	return (jlong)_ret;
     	HANDLE_JAVA_EXCEPTION_END()
     	return 0;
@@ -1832,9 +1889,9 @@ static jclass cxxExceptionClass = NULL;
 
     static private native long b2MakeProxy_internal(long vertices, int count, float radius);/*
     	HANDLE_JAVA_EXCEPTION_START()
-    	CHECK_AND_THROW_C_TYPE(env, int32_t, count, 1, return 0);
+    	CHECK_AND_THROW_C_TYPE(env, int, count, 1, return 0);
     	b2ShapeProxy* _ret = (b2ShapeProxy*)malloc(sizeof(b2ShapeProxy));
-    	*_ret = b2MakeProxy((const b2Vec2 *)vertices, (int32_t)count, (float)radius);
+    	*_ret = b2MakeProxy((const b2Vec2 *)vertices, (int)count, (float)radius);
     	return (jlong)_ret;
     	HANDLE_JAVA_EXCEPTION_END()
     	return 0;
@@ -2105,9 +2162,9 @@ static jclass cxxExceptionClass = NULL;
 
     static private native int b2DynamicTree_CreateProxy_internal(long tree, long aabb, long categoryBits, int userData);/*
     	HANDLE_JAVA_EXCEPTION_START()
-    	CHECK_AND_THROW_C_TYPE(env, int32_t, userData, 3, return 0);
+    	CHECK_AND_THROW_C_TYPE(env, int, userData, 3, return 0);
     	CHECK_AND_THROW_C_TYPE(env, uint64_t, categoryBits, 2, return 0);
-    	return (jint)b2DynamicTree_CreateProxy((b2DynamicTree *)tree, *(b2AABB*)aabb, (uint64_t)categoryBits, (int32_t)userData);
+    	return (jint)b2DynamicTree_CreateProxy((b2DynamicTree *)tree, *(b2AABB*)aabb, (uint64_t)categoryBits, (int)userData);
     	HANDLE_JAVA_EXCEPTION_END()
     	return 0;
     */
@@ -2121,8 +2178,8 @@ static jclass cxxExceptionClass = NULL;
 
     static private native void b2DynamicTree_DestroyProxy_internal(long tree, int proxyId);/*
     	HANDLE_JAVA_EXCEPTION_START()
-    	CHECK_AND_THROW_C_TYPE(env, int32_t, proxyId, 1, return);
-    	b2DynamicTree_DestroyProxy((b2DynamicTree *)tree, (int32_t)proxyId);
+    	CHECK_AND_THROW_C_TYPE(env, int, proxyId, 1, return);
+    	b2DynamicTree_DestroyProxy((b2DynamicTree *)tree, (int)proxyId);
     	HANDLE_JAVA_EXCEPTION_END()
     */
 
@@ -2135,8 +2192,8 @@ static jclass cxxExceptionClass = NULL;
 
     static private native void b2DynamicTree_MoveProxy_internal(long tree, int proxyId, long aabb);/*
     	HANDLE_JAVA_EXCEPTION_START()
-    	CHECK_AND_THROW_C_TYPE(env, int32_t, proxyId, 1, return);
-    	b2DynamicTree_MoveProxy((b2DynamicTree *)tree, (int32_t)proxyId, *(b2AABB*)aabb);
+    	CHECK_AND_THROW_C_TYPE(env, int, proxyId, 1, return);
+    	b2DynamicTree_MoveProxy((b2DynamicTree *)tree, (int)proxyId, *(b2AABB*)aabb);
     	HANDLE_JAVA_EXCEPTION_END()
     */
 
@@ -2149,15 +2206,14 @@ static jclass cxxExceptionClass = NULL;
 
     static private native void b2DynamicTree_EnlargeProxy_internal(long tree, int proxyId, long aabb);/*
     	HANDLE_JAVA_EXCEPTION_START()
-    	CHECK_AND_THROW_C_TYPE(env, int32_t, proxyId, 1, return);
-    	b2DynamicTree_EnlargeProxy((b2DynamicTree *)tree, (int32_t)proxyId, *(b2AABB*)aabb);
+    	CHECK_AND_THROW_C_TYPE(env, int, proxyId, 1, return);
+    	b2DynamicTree_EnlargeProxy((b2DynamicTree *)tree, (int)proxyId, *(b2AABB*)aabb);
     	HANDLE_JAVA_EXCEPTION_END()
     */
 
     /**
-     * Query an AABB for overlapping proxies. The callback class is called for each proxy that overlaps the supplied AABB.
-     *
-     * @return performance data
+     *  Query an AABB for overlapping proxies. The callback class is called for each proxy that overlaps the supplied AABB.
+     * 	@return performance data
      */
     public static b2TreeStats b2DynamicTree_Query(b2DynamicTree.b2DynamicTreePointer tree, b2AABB aabb, long maskBits, ClosureObject<b2TreeQueryCallbackFcn> callback, VoidPointer context) {
         return new b2TreeStats(b2DynamicTree_Query_internal(tree.getPointer(), aabb.getPointer(), maskBits, callback.getPointer(), context.getPointer()), true);
@@ -2174,20 +2230,19 @@ static jclass cxxExceptionClass = NULL;
     */
 
     /**
-     * Ray cast against the proxies in the tree. This relies on the callback
-     * to perform a exact ray cast in the case were the proxy contains a shape.
-     * The callback also performs the any collision filtering. This has performance
-     * roughly equal to k * log(n), where k is the number of collisions and n is the
-     * number of proxies in the tree.
-     * Bit-wise filtering using mask bits can greatly improve performance in some scenarios.
-     * However, this filtering may be approximate, so the user should still apply filtering to results.
-     *
-     * @param tree     the dynamic tree to ray cast
-     * @param input    the ray cast input data. The ray extends from p1 to p1 + maxFraction * (p2 - p1)
-     * @param maskBits mask bit hint: `bool accept = (maskBits & node->categoryBits) != 0;`
-     * @param callback a callback class that is called for each proxy that is hit by the ray
-     * @param context  user context that is passed to the callback
-     * @return performance data
+     *  Ray cast against the proxies in the tree. This relies on the callback
+     *  to perform a exact ray cast in the case were the proxy contains a shape.
+     *  The callback also performs the any collision filtering. This has performance
+     *  roughly equal to k * log(n), where k is the number of collisions and n is the
+     *  number of proxies in the tree.
+     *  Bit-wise filtering using mask bits can greatly improve performance in some scenarios.
+     * 	However, this filtering may be approximate, so the user should still apply filtering to results.
+     *  @param tree the dynamic tree to ray cast
+     *  @param input the ray cast input data. The ray extends from p1 to p1 + maxFraction * (p2 - p1)
+     *  @param maskBits mask bit hint: `bool accept = (maskBits & node->categoryBits) != 0;`
+     *  @param callback a callback class that is called for each proxy that is hit by the ray
+     *  @param context user context that is passed to the callback
+     * 	@return performance data
      */
     public static b2TreeStats b2DynamicTree_RayCast(b2DynamicTree.b2DynamicTreePointer tree, b2RayCastInput.b2RayCastInputPointer input, long maskBits, ClosureObject<b2TreeRayCastCallbackFcn> callback, VoidPointer context) {
         return new b2TreeStats(b2DynamicTree_RayCast_internal(tree.getPointer(), input.getPointer(), maskBits, callback.getPointer(), context.getPointer()), true);
@@ -2204,18 +2259,17 @@ static jclass cxxExceptionClass = NULL;
     */
 
     /**
-     * Ray cast against the proxies in the tree. This relies on the callback
-     * to perform a exact ray cast in the case were the proxy contains a shape.
-     * The callback also performs the any collision filtering. This has performance
-     * roughly equal to k * log(n), where k is the number of collisions and n is the
-     * number of proxies in the tree.
-     *
-     * @param tree     the dynamic tree to ray cast
-     * @param input    the ray cast input data. The ray extends from p1 to p1 + maxFraction * (p2 - p1).
-     * @param maskBits filter bits: `bool accept = (maskBits & node->categoryBits) != 0;`
-     * @param callback a callback class that is called for each proxy that is hit by the shape
-     * @param context  user context that is passed to the callback
-     * @return performance data
+     *  Ray cast against the proxies in the tree. This relies on the callback
+     *  to perform a exact ray cast in the case were the proxy contains a shape.
+     *  The callback also performs the any collision filtering. This has performance
+     *  roughly equal to k * log(n), where k is the number of collisions and n is the
+     *  number of proxies in the tree.
+     *  @param tree the dynamic tree to ray cast
+     *  @param input the ray cast input data. The ray extends from p1 to p1 + maxFraction * (p2 - p1).
+     *  @param maskBits filter bits: `bool accept = (maskBits & node->categoryBits) != 0;`
+     *  @param callback a callback class that is called for each proxy that is hit by the shape
+     *  @param context user context that is passed to the callback
+     * 	@return performance data
      */
     public static b2TreeStats b2DynamicTree_ShapeCast(b2DynamicTree.b2DynamicTreePointer tree, b2ShapeCastInput.b2ShapeCastInputPointer input, long maskBits, ClosureObject<b2TreeShapeCastCallbackFcn> callback, VoidPointer context) {
         return new b2TreeStats(b2DynamicTree_ShapeCast_internal(tree.getPointer(), input.getPointer(), maskBits, callback.getPointer(), context.getPointer()), true);
@@ -2232,21 +2286,7 @@ static jclass cxxExceptionClass = NULL;
     */
 
     /**
-     * Validate this tree. For testing.
-     */
-    public static void b2DynamicTree_Validate(b2DynamicTree.b2DynamicTreePointer tree) {
-        b2DynamicTree_Validate_internal(tree.getPointer());
-    }
-
-    static private native void b2DynamicTree_Validate_internal(long tree);/*
-    	HANDLE_JAVA_EXCEPTION_START()
-    	b2DynamicTree_Validate((const b2DynamicTree *)tree);
-    	HANDLE_JAVA_EXCEPTION_END()
-    */
-
-    /**
-     * Compute the height of the binary tree in O(N) time. Should not be
-     * called often.
+     * Get the height of the binary tree.
      */
     public static int b2DynamicTree_GetHeight(b2DynamicTree.b2DynamicTreePointer tree) {
         return b2DynamicTree_GetHeight_internal(tree.getPointer());
@@ -2325,8 +2365,8 @@ static jclass cxxExceptionClass = NULL;
 
     static private native int b2DynamicTree_GetUserData_internal(long tree, int proxyId);/*
     	HANDLE_JAVA_EXCEPTION_START()
-    	CHECK_AND_THROW_C_TYPE(env, int32_t, proxyId, 1, return 0);
-    	return (jint)b2DynamicTree_GetUserData((const b2DynamicTree *)tree, (int32_t)proxyId);
+    	CHECK_AND_THROW_C_TYPE(env, int, proxyId, 1, return 0);
+    	return (jint)b2DynamicTree_GetUserData((const b2DynamicTree *)tree, (int)proxyId);
     	HANDLE_JAVA_EXCEPTION_END()
     	return 0;
     */
@@ -2340,12 +2380,38 @@ static jclass cxxExceptionClass = NULL;
 
     static private native long b2DynamicTree_GetAABB_internal(long tree, int proxyId);/*
     	HANDLE_JAVA_EXCEPTION_START()
-    	CHECK_AND_THROW_C_TYPE(env, int32_t, proxyId, 1, return 0);
+    	CHECK_AND_THROW_C_TYPE(env, int, proxyId, 1, return 0);
     	b2AABB* _ret = (b2AABB*)malloc(sizeof(b2AABB));
-    	*_ret = b2DynamicTree_GetAABB((const b2DynamicTree *)tree, (int32_t)proxyId);
+    	*_ret = b2DynamicTree_GetAABB((const b2DynamicTree *)tree, (int)proxyId);
     	return (jlong)_ret;
     	HANDLE_JAVA_EXCEPTION_END()
     	return 0;
+    */
+
+    /**
+     * Validate this tree. For testing.
+     */
+    public static void b2DynamicTree_Validate(b2DynamicTree.b2DynamicTreePointer tree) {
+        b2DynamicTree_Validate_internal(tree.getPointer());
+    }
+
+    static private native void b2DynamicTree_Validate_internal(long tree);/*
+    	HANDLE_JAVA_EXCEPTION_START()
+    	b2DynamicTree_Validate((const b2DynamicTree *)tree);
+    	HANDLE_JAVA_EXCEPTION_END()
+    */
+
+    /**
+     * Validate this tree has no enlarged AABBs. For testing.
+     */
+    public static void b2DynamicTree_ValidateNoEnlarged(b2DynamicTree.b2DynamicTreePointer tree) {
+        b2DynamicTree_ValidateNoEnlarged_internal(tree.getPointer());
+    }
+
+    static private native void b2DynamicTree_ValidateNoEnlarged_internal(long tree);/*
+    	HANDLE_JAVA_EXCEPTION_START()
+    	b2DynamicTree_ValidateNoEnlarged((const b2DynamicTree *)tree);
+    	HANDLE_JAVA_EXCEPTION_END()
     */
 
     /**
@@ -2474,7 +2540,6 @@ static jclass cxxExceptionClass = NULL;
 
     /**
      * Use this to initialize your world definition
-     *
      * @ingroup world
      */
     public static b2WorldDef b2DefaultWorldDef() {
@@ -2492,7 +2557,6 @@ static jclass cxxExceptionClass = NULL;
 
     /**
      * Use this to initialize your body definition
-     *
      * @ingroup body
      */
     public static b2BodyDef b2DefaultBodyDef() {
@@ -2510,7 +2574,6 @@ static jclass cxxExceptionClass = NULL;
 
     /**
      * Use this to initialize your filter
-     *
      * @ingroup shape
      */
     public static b2Filter b2DefaultFilter() {
@@ -2528,7 +2591,6 @@ static jclass cxxExceptionClass = NULL;
 
     /**
      * Use this to initialize your query filter
-     *
      * @ingroup shape
      */
     public static b2QueryFilter b2DefaultQueryFilter() {
@@ -2546,7 +2608,6 @@ static jclass cxxExceptionClass = NULL;
 
     /**
      * Use this to initialize your shape definition
-     *
      * @ingroup shape
      */
     public static b2ShapeDef b2DefaultShapeDef() {
@@ -2564,7 +2625,6 @@ static jclass cxxExceptionClass = NULL;
 
     /**
      * Use this to initialize your chain definition
-     *
      * @ingroup shape
      */
     public static b2ChainDef b2DefaultChainDef() {
@@ -2582,7 +2642,6 @@ static jclass cxxExceptionClass = NULL;
 
     /**
      * Use this to initialize your joint definition
-     *
      * @ingroup distance_joint
      */
     public static b2DistanceJointDef b2DefaultDistanceJointDef() {
@@ -2600,7 +2659,6 @@ static jclass cxxExceptionClass = NULL;
 
     /**
      * Use this to initialize your joint definition
-     *
      * @ingroup motor_joint
      */
     public static b2MotorJointDef b2DefaultMotorJointDef() {
@@ -2618,7 +2676,6 @@ static jclass cxxExceptionClass = NULL;
 
     /**
      * Use this to initialize your joint definition
-     *
      * @ingroup mouse_joint
      */
     public static b2MouseJointDef b2DefaultMouseJointDef() {
@@ -2636,7 +2693,6 @@ static jclass cxxExceptionClass = NULL;
 
     /**
      * Use this to initialize your joint definition
-     *
      * @ingroup null_joint
      */
     public static b2NullJointDef b2DefaultNullJointDef() {
@@ -2654,7 +2710,6 @@ static jclass cxxExceptionClass = NULL;
 
     /**
      * Use this to initialize your joint definition
-     *
      * @ingroupd prismatic_joint
      */
     public static b2PrismaticJointDef b2DefaultPrismaticJointDef() {
@@ -2672,7 +2727,6 @@ static jclass cxxExceptionClass = NULL;
 
     /**
      * Use this to initialize your joint definition.
-     *
      * @ingroup revolute_joint
      */
     public static b2RevoluteJointDef b2DefaultRevoluteJointDef() {
@@ -2690,7 +2744,6 @@ static jclass cxxExceptionClass = NULL;
 
     /**
      * Use this to initialize your joint definition
-     *
      * @ingroup weld_joint
      */
     public static b2WeldJointDef b2DefaultWeldJointDef() {
@@ -2708,7 +2761,6 @@ static jclass cxxExceptionClass = NULL;
 
     /**
      * Use this to initialize your joint definition
-     *
      * @ingroup wheel_joint
      */
     public static b2WheelJointDef b2DefaultWheelJointDef() {
@@ -2726,7 +2778,6 @@ static jclass cxxExceptionClass = NULL;
 
     /**
      * Use this to initialize your explosion definition
-     *
      * @ingroup world
      */
     public static b2ExplosionDef b2DefaultExplosionDef() {
@@ -2762,7 +2813,6 @@ static jclass cxxExceptionClass = NULL;
     /**
      * Create a world for rigid body simulation. A world contains bodies, shapes, and constraints. You make create
      * up to 128 worlds. Each world is completely independent and may be simulated in parallel.
-     *
      * @return the world id.
      */
     public static b2WorldId b2CreateWorld(b2WorldDef.b2WorldDefPointer def) {
@@ -2807,9 +2857,8 @@ static jclass cxxExceptionClass = NULL;
 
     /**
      * Simulate a world for one time step. This performs collision detection, integration, and constraint solution.
-     *
-     * @param worldId      The world to simulate
-     * @param timeStep     The amount of time to simulate, this should be a fixed number. Usually 1/60.
+     * @param worldId The world to simulate
+     * @param timeStep The amount of time to simulate, this should be a fixed number. Usually 1/60.
      * @param subStepCount The number of sub-steps, increasing the sub-step count can increase accuracy. Usually 4.
      */
     public static void b2World_Step(b2WorldId worldId, float timeStep, int subStepCount) {
@@ -2965,18 +3014,17 @@ static jclass cxxExceptionClass = NULL;
     */
 
     /**
-     * Cast a ray into the world to collect shapes in the path of the ray.
-     * Your callback function controls whether you get the closest point, any point, or n-points.
-     * The ray-cast ignores shapes that contain the starting point.
-     *
-     * @param worldId     The world to cast the ray against
-     * @param origin      The start point of the ray
-     * @param translation The translation of the ray from the start point to the end point
-     * @param filter      Contains bit flags to filter unwanted shapes from the results
-     * @param fcn         A user implemented callback function
-     * @param context     A user context that is passed along to the callback function
-     * @return traversal performance counters
-     * @note The callback function may receive shapes in any order
+     *  Cast a ray into the world to collect shapes in the path of the ray.
+     *  Your callback function controls whether you get the closest point, any point, or n-points.
+     *  The ray-cast ignores shapes that contain the starting point.
+     *  @note The callback function may receive shapes in any order
+     *  @param worldId The world to cast the ray against
+     *  @param origin The start point of the ray
+     *  @param translation The translation of the ray from the start point to the end point
+     *  @param filter Contains bit flags to filter unwanted shapes from the results
+     *  @param fcn A user implemented callback function
+     *  @param context A user context that is passed along to the callback function
+     * 	@return traversal performance counters
      */
     public static b2TreeStats b2World_CastRay(b2WorldId worldId, b2Vec2 origin, b2Vec2 translation, b2QueryFilter filter, ClosureObject<b2CastResultFcn> fcn, VoidPointer context) {
         return new b2TreeStats(b2World_CastRay_internal(worldId.getPointer(), origin.getPointer(), translation.getPointer(), filter.getPointer(), fcn.getPointer(), context.getPointer()), true);
@@ -3009,9 +3057,8 @@ static jclass cxxExceptionClass = NULL;
     */
 
     /**
-     * Cast a circle through the world. Similar to a cast ray except that a circle is cast instead of a point.
-     *
-     * @see Box2d#b2World_CastRay
+     *  Cast a circle through the world. Similar to a cast ray except that a circle is cast instead of a point.
+     * 	@see Box2d#b2World_CastRay
      */
     public static b2TreeStats b2World_CastCircle(b2WorldId worldId, b2Circle.b2CirclePointer circle, b2Transform originTransform, b2Vec2 translation, b2QueryFilter filter, ClosureObject<b2CastResultFcn> fcn, VoidPointer context) {
         return new b2TreeStats(b2World_CastCircle_internal(worldId.getPointer(), circle.getPointer(), originTransform.getPointer(), translation.getPointer(), filter.getPointer(), fcn.getPointer(), context.getPointer()), true);
@@ -3027,9 +3074,8 @@ static jclass cxxExceptionClass = NULL;
     */
 
     /**
-     * Cast a capsule through the world. Similar to a cast ray except that a capsule is cast instead of a point.
-     *
-     * @see Box2d#b2World_CastRay
+     *  Cast a capsule through the world. Similar to a cast ray except that a capsule is cast instead of a point.
+     * 	@see Box2d#b2World_CastRay
      */
     public static b2TreeStats b2World_CastCapsule(b2WorldId worldId, b2Capsule.b2CapsulePointer capsule, b2Transform originTransform, b2Vec2 translation, b2QueryFilter filter, ClosureObject<b2CastResultFcn> fcn, VoidPointer context) {
         return new b2TreeStats(b2World_CastCapsule_internal(worldId.getPointer(), capsule.getPointer(), originTransform.getPointer(), translation.getPointer(), filter.getPointer(), fcn.getPointer(), context.getPointer()), true);
@@ -3045,9 +3091,8 @@ static jclass cxxExceptionClass = NULL;
     */
 
     /**
-     * Cast a polygon through the world. Similar to a cast ray except that a polygon is cast instead of a point.
-     *
-     * @see Box2d#b2World_CastRay
+     *  Cast a polygon through the world. Similar to a cast ray except that a polygon is cast instead of a point.
+     * 	@see Box2d#b2World_CastRay
      */
     public static b2TreeStats b2World_CastPolygon(b2WorldId worldId, b2Polygon.b2PolygonPointer polygon, b2Transform originTransform, b2Vec2 translation, b2QueryFilter filter, ClosureObject<b2CastResultFcn> fcn, VoidPointer context) {
         return new b2TreeStats(b2World_CastPolygon_internal(worldId.getPointer(), polygon.getPointer(), originTransform.getPointer(), translation.getPointer(), filter.getPointer(), fcn.getPointer(), context.getPointer()), true);
@@ -3065,7 +3110,6 @@ static jclass cxxExceptionClass = NULL;
     /**
      * Enable/disable sleep. If your application does not need sleeping, you can gain some performance
      * by disabling sleep completely at the world level.
-     *
      * @see b2WorldDef
      */
     public static void b2World_EnableSleeping(b2WorldId worldId, boolean flag) {
@@ -3097,7 +3141,6 @@ static jclass cxxExceptionClass = NULL;
      * Enable/disable continuous collision between dynamic and static bodies. Generally you should keep continuous
      * collision enabled to prevent fast moving objects from going through static objects. The performance gain from
      * disabling continuous collision is minor.
-     *
      * @see b2WorldDef
      */
     public static void b2World_EnableContinuous(b2WorldId worldId, boolean flag) {
@@ -3128,7 +3171,6 @@ static jclass cxxExceptionClass = NULL;
     /**
      * Adjust the restitution threshold. It is recommended not to make this value very small
      * because it will prevent bodies from sleeping. Usually in meters per second.
-     *
      * @see b2WorldDef
      */
     public static void b2World_SetRestitutionThreshold(b2WorldId worldId, float value) {
@@ -3158,7 +3200,6 @@ static jclass cxxExceptionClass = NULL;
     /**
      * Adjust the hit event threshold. This controls the collision speed needed to generate a b2ContactHitEvent.
      * Usually in meters per second.
-     *
      * @see b2WorldDef::hitEventThreshold
      */
     public static void b2World_SetHitEventThreshold(b2WorldId worldId, float value) {
@@ -3214,7 +3255,6 @@ static jclass cxxExceptionClass = NULL;
     /**
      * Set the gravity vector for the entire world. Box2D has no concept of an up direction and this
      * is left as a decision for the application. Usually in m/s^2.
-     *
      * @see b2WorldDef
      */
     public static void b2World_SetGravity(b2WorldId worldId, b2Vec2 gravity) {
@@ -3245,8 +3285,7 @@ static jclass cxxExceptionClass = NULL;
 
     /**
      * Apply a radial explosion
-     *
-     * @param worldId      The world id
+     * @param worldId The world id
      * @param explosionDef The explosion definition
      */
     public static void b2World_Explode(b2WorldId worldId, b2ExplosionDef.b2ExplosionDefPointer explosionDef) {
@@ -3261,11 +3300,10 @@ static jclass cxxExceptionClass = NULL;
 
     /**
      * Adjust contact tuning parameters
-     *
-     * @param worldId      The world id
-     * @param hertz        The contact stiffness (cycles per second)
+     * @param worldId The world id
+     * @param hertz The contact stiffness (cycles per second)
      * @param dampingRatio The contact bounciness with 1 being critical damping (non-dimensional)
-     * @param pushSpeed    The maximum contact constraint push out speed (meters per second)
+     * @param pushSpeed The maximum contact constraint push out speed (meters per second)
      * @note Advanced feature
      */
     public static void b2World_SetContactTuning(b2WorldId worldId, float hertz, float dampingRatio, float pushSpeed) {
@@ -3280,9 +3318,8 @@ static jclass cxxExceptionClass = NULL;
 
     /**
      * Adjust joint tuning parameters
-     *
-     * @param worldId      The world id
-     * @param hertz        The contact stiffness (cycles per second)
+     * @param worldId The world id
+     * @param hertz The contact stiffness (cycles per second)
      * @param dampingRatio The contact bounciness with 1 being critical damping (non-dimensional)
      * @note Advanced feature
      */
@@ -3468,8 +3505,8 @@ static jclass cxxExceptionClass = NULL;
     /**
      * Create a rigid body given a definition. No reference to the definition is retained. So you can create the definition
      * on the stack and pass it as a pointer.
-     *
-     * @code{.c} b2BodyDef bodyDef = b2DefaultBodyDef();
+     * @code{.c}
+     * b2BodyDef bodyDef = b2DefaultBodyDef();
      * b2BodyId myBodyId = b2CreateBody(myWorldId, &bodyDef);
      * @endcode
      * @warning This function is locked during callbacks.
@@ -3519,7 +3556,7 @@ static jclass cxxExceptionClass = NULL;
      * Get the body type: static, kinematic, or dynamic
      */
     public static b2BodyType b2Body_GetType(b2BodyId bodyId) {
-        return b2BodyType.getByIndex(b2Body_GetType_internal(bodyId.getPointer()));
+        return b2BodyType.getByIndex((int) b2Body_GetType_internal(bodyId.getPointer()));
     }
 
     static private native int b2Body_GetType_internal(long bodyId);/*
@@ -3541,6 +3578,34 @@ static jclass cxxExceptionClass = NULL;
     	HANDLE_JAVA_EXCEPTION_START()
     	b2Body_SetType(*(b2BodyId*)bodyId, (b2BodyType)type);
     	HANDLE_JAVA_EXCEPTION_END()
+    */
+
+    /**
+     * Set the body name. Up to 31 characters excluding 0 termination.
+     */
+    public static void b2Body_SetName(b2BodyId bodyId, CSizedIntPointer name) {
+        name.assertHasCTypeBacking("const char");
+        b2Body_SetName_internal(bodyId.getPointer(), name.getPointer());
+    }
+
+    static private native void b2Body_SetName_internal(long bodyId, long name);/*
+    	HANDLE_JAVA_EXCEPTION_START()
+    	b2Body_SetName(*(b2BodyId*)bodyId, (const char *)name);
+    	HANDLE_JAVA_EXCEPTION_END()
+    */
+
+    /**
+     * Get the body name. May be null.
+     */
+    public static CSizedIntPointer b2Body_GetName(b2BodyId bodyId) {
+        return new CSizedIntPointer(b2Body_GetName_internal(bodyId.getPointer()), false, "const char");
+    }
+
+    static private native long b2Body_GetName_internal(long bodyId);/*
+    	HANDLE_JAVA_EXCEPTION_START()
+    	return (jlong)b2Body_GetName(*(b2BodyId*)bodyId);
+    	HANDLE_JAVA_EXCEPTION_END()
+    	return 0;
     */
 
     /**
@@ -3620,7 +3685,6 @@ static jclass cxxExceptionClass = NULL;
 
     /**
      * Set the world transform of a body. This acts as a teleport and is fairly expensive.
-     *
      * @note Generally you should create a body with then intended transform.
      * @see b2BodyDef::position and b2BodyDef::angle
      */
@@ -3758,11 +3822,10 @@ static jclass cxxExceptionClass = NULL;
      * Apply a force at a world point. If the force is not applied at the center of mass,
      * it will generate a torque and affect the angular velocity. This optionally wakes up the body.
      * The force is ignored if the body is not awake.
-     *
      * @param bodyId The body id
-     * @param force  The world force vector, usually in newtons (N)
-     * @param point  The world position of the point of application
-     * @param wake   Option to wake up the body
+     * @param force The world force vector, usually in newtons (N)
+     * @param point The world position of the point of application
+     * @param wake Option to wake up the body
      */
     public static void b2Body_ApplyForce(b2BodyId bodyId, b2Vec2 force, b2Vec2 point, boolean wake) {
         b2Body_ApplyForce_internal(bodyId.getPointer(), force.getPointer(), point.getPointer(), wake);
@@ -3778,10 +3841,9 @@ static jclass cxxExceptionClass = NULL;
     /**
      * Apply a force to the center of mass. This optionally wakes up the body.
      * The force is ignored if the body is not awake.
-     *
      * @param bodyId The body id
-     * @param force  the world force vector, usually in newtons (N).
-     * @param wake   also wake up the body
+     * @param force the world force vector, usually in newtons (N).
+     * @param wake also wake up the body
      */
     public static void b2Body_ApplyForceToCenter(b2BodyId bodyId, b2Vec2 force, boolean wake) {
         b2Body_ApplyForceToCenter_internal(bodyId.getPointer(), force.getPointer(), wake);
@@ -3797,10 +3859,9 @@ static jclass cxxExceptionClass = NULL;
     /**
      * Apply a torque. This affects the angular velocity without affecting the linear velocity.
      * This optionally wakes the body. The torque is ignored if the body is not awake.
-     *
      * @param bodyId The body id
      * @param torque about the z-axis (out of the screen), usually in N*m.
-     * @param wake   also wake up the body
+     * @param wake also wake up the body
      */
     public static void b2Body_ApplyTorque(b2BodyId bodyId, float torque, boolean wake) {
         b2Body_ApplyTorque_internal(bodyId.getPointer(), torque, wake);
@@ -3818,11 +3879,10 @@ static jclass cxxExceptionClass = NULL;
      * It also modifies the angular velocity if the point of application
      * is not at the center of mass. This optionally wakes the body.
      * The impulse is ignored if the body is not awake.
-     *
-     * @param bodyId  The body id
+     * @param bodyId The body id
      * @param impulse the world impulse vector, usually in N*s or kg*m/s.
-     * @param point   the world position of the point of application.
-     * @param wake    also wake up the body
+     * @param point the world position of the point of application.
+     * @param wake also wake up the body
      * @warning This should be used for one-shot impulses. If you need a steady force,
      * use a force instead, which will work better with the sub-stepping solver.
      */
@@ -3840,10 +3900,9 @@ static jclass cxxExceptionClass = NULL;
     /**
      * Apply an impulse to the center of mass. This immediately modifies the velocity.
      * The impulse is ignored if the body is not awake. This optionally wakes the body.
-     *
-     * @param bodyId  The body id
+     * @param bodyId The body id
      * @param impulse the world impulse vector, usually in N*s or kg*m/s.
-     * @param wake    also wake up the body
+     * @param wake also wake up the body
      * @warning This should be used for one-shot impulses. If you need a steady force,
      * use a force instead, which will work better with the sub-stepping solver.
      */
@@ -3861,10 +3920,9 @@ static jclass cxxExceptionClass = NULL;
     /**
      * Apply an angular impulse. The impulse is ignored if the body is not awake.
      * This optionally wakes the body.
-     *
-     * @param bodyId  The body id
+     * @param bodyId The body id
      * @param impulse the angular impulse, usually in units of kg*m*m/s
-     * @param wake    also wake up the body
+     * @param wake also wake up the body
      * @warning This should be used for one-shot impulses. If you need a steady force,
      * use a force instead, which will work better with the sub-stepping solver.
      */
@@ -4043,7 +4101,6 @@ static jclass cxxExceptionClass = NULL;
 
     /**
      * Adjust the gravity scale. Normally this is set in b2BodyDef before creation.
-     *
      * @see b2BodyDef::gravityScale
      */
     public static void b2Body_SetGravityScale(b2BodyId bodyId, float gravityScale) {
@@ -4086,7 +4143,6 @@ static jclass cxxExceptionClass = NULL;
 
     /**
      * Wake a body from sleep. This wakes the entire island the body is touching.
-     *
      * @warning Putting a body to sleep will put the entire island of bodies touching this body to sleep,
      * which can be expensive and possibly unintuitive.
      */
@@ -4254,27 +4310,9 @@ static jclass cxxExceptionClass = NULL;
     */
 
     /**
-     * Enable/disable sensor events on all shapes.
-     *
-     * @warning changing this at runtime may cause mismatched begin/end touch events
-     * @see b2ShapeDef::enableSensorEvents
-     */
-    public static void b2Body_EnableSensorEvents(b2BodyId bodyId, boolean flag) {
-        b2Body_EnableSensorEvents_internal(bodyId.getPointer(), flag);
-    }
-
-    static private native void b2Body_EnableSensorEvents_internal(long bodyId, boolean flag);/*
-    	HANDLE_JAVA_EXCEPTION_START()
-    	CHECK_AND_THROW_C_TYPE(env, bool, flag, 1, return);
-    	b2Body_EnableSensorEvents(*(b2BodyId*)bodyId, (bool)flag);
-    	HANDLE_JAVA_EXCEPTION_END()
-    */
-
-    /**
      * Enable/disable contact events on all shapes.
-     *
-     * @warning changing this at runtime may cause mismatched begin/end touch events
      * @see b2ShapeDef::enableContactEvents
+     * @warning changing this at runtime may cause mismatched begin/end touch events
      */
     public static void b2Body_EnableContactEvents(b2BodyId bodyId, boolean flag) {
         b2Body_EnableContactEvents_internal(bodyId.getPointer(), flag);
@@ -4289,7 +4327,6 @@ static jclass cxxExceptionClass = NULL;
 
     /**
      * Enable/disable hit events on all shapes
-     *
      * @see b2ShapeDef::enableHitEvents
      */
     public static void b2Body_EnableHitEvents(b2BodyId bodyId, boolean flag) {
@@ -4335,7 +4372,6 @@ static jclass cxxExceptionClass = NULL;
 
     /**
      * Get the shape ids for all shapes on this body, up to the provided capacity.
-     *
      * @returns the number of shape ids stored in the user array
      */
     public static int b2Body_GetShapes(b2BodyId bodyId, b2ShapeId.b2ShapeIdPointer shapeArray, int capacity) {
@@ -4366,7 +4402,6 @@ static jclass cxxExceptionClass = NULL;
 
     /**
      * Get the joint ids for all joints on this body, up to the provided capacity
-     *
      * @returns the number of joint ids stored in the user array
      */
     public static int b2Body_GetJoints(b2BodyId bodyId, b2JointId.b2JointIdPointer jointArray, int capacity) {
@@ -4397,7 +4432,6 @@ static jclass cxxExceptionClass = NULL;
 
     /**
      * Get the touching contact data for a body.
-     *
      * @note Box2D uses speculative collision so some contact points may be separated.
      * @returns the number of elements filled in the provided array
      * @warning do not ignore the return value, it specifies the valid number of elements
@@ -4434,7 +4468,6 @@ static jclass cxxExceptionClass = NULL;
     /**
      * Create a circle shape and attach it to a body. The shape definition and geometry are fully cloned.
      * Contacts are not created until the next time step.
-     *
      * @return the shape id for accessing the shape
      */
     public static b2ShapeId b2CreateCircleShape(b2BodyId bodyId, b2ShapeDef.b2ShapeDefPointer def, b2Circle.b2CirclePointer circle) {
@@ -4453,7 +4486,6 @@ static jclass cxxExceptionClass = NULL;
     /**
      * Create a line segment shape and attach it to a body. The shape definition and geometry are fully cloned.
      * Contacts are not created until the next time step.
-     *
      * @return the shape id for accessing the shape
      */
     public static b2ShapeId b2CreateSegmentShape(b2BodyId bodyId, b2ShapeDef.b2ShapeDefPointer def, b2Segment.b2SegmentPointer segment) {
@@ -4472,7 +4504,6 @@ static jclass cxxExceptionClass = NULL;
     /**
      * Create a capsule shape and attach it to a body. The shape definition and geometry are fully cloned.
      * Contacts are not created until the next time step.
-     *
      * @return the shape id for accessing the shape
      */
     public static b2ShapeId b2CreateCapsuleShape(b2BodyId bodyId, b2ShapeDef.b2ShapeDefPointer def, b2Capsule.b2CapsulePointer capsule) {
@@ -4491,7 +4522,6 @@ static jclass cxxExceptionClass = NULL;
     /**
      * Create a polygon shape and attach it to a body. The shape definition and geometry are fully cloned.
      * Contacts are not created until the next time step.
-     *
      * @return the shape id for accessing the shape
      */
     public static b2ShapeId b2CreatePolygonShape(b2BodyId bodyId, b2ShapeDef.b2ShapeDefPointer def, b2Polygon.b2PolygonPointer polygon) {
@@ -4508,10 +4538,9 @@ static jclass cxxExceptionClass = NULL;
     */
 
     /**
-     * Destroy a shape. You may defer the body mass update which can improve performance if several shapes on a
-     * body are destroyed at once.
-     *
-     * @see Box2d#b2Body_ApplyMassFromShapes
+     *  Destroy a shape. You may defer the body mass update which can improve performance if several shapes on a
+     * 	body are destroyed at once.
+     * 	@see Box2d#b2Body_ApplyMassFromShapes
      */
     public static void b2DestroyShape(b2ShapeId shapeId, boolean updateBodyMass) {
         b2DestroyShape_internal(shapeId.getPointer(), updateBodyMass);
@@ -4542,7 +4571,7 @@ static jclass cxxExceptionClass = NULL;
      * Get the type of a shape
      */
     public static b2ShapeType b2Shape_GetType(b2ShapeId shapeId) {
-        return b2ShapeType.getByIndex(b2Shape_GetType_internal(shapeId.getPointer()));
+        return b2ShapeType.getByIndex((int) b2Shape_GetType_internal(shapeId.getPointer()));
     }
 
     static private native int b2Shape_GetType_internal(long shapeId);/*
@@ -4629,7 +4658,6 @@ static jclass cxxExceptionClass = NULL;
     /**
      * Set the mass density of a shape, usually in kg/m^2.
      * This will optionally update the mass properties on the parent body.
-     *
      * @see b2ShapeDef::density, b2Body_ApplyMassFromShapes
      */
     public static void b2Shape_SetDensity(b2ShapeId shapeId, float density, boolean updateBodyMass) {
@@ -4659,7 +4687,6 @@ static jclass cxxExceptionClass = NULL;
 
     /**
      * Set the friction on a shape
-     *
      * @see b2ShapeDef::friction
      */
     public static void b2Shape_SetFriction(b2ShapeId shapeId, float friction) {
@@ -4688,7 +4715,6 @@ static jclass cxxExceptionClass = NULL;
 
     /**
      * Set the shape restitution (bounciness)
-     *
      * @see b2ShapeDef::restitution
      */
     public static void b2Shape_SetRestitution(b2ShapeId shapeId, float restitution) {
@@ -4732,8 +4758,9 @@ static jclass cxxExceptionClass = NULL;
     */
 
     /**
-     * Set the current filter. This is almost as expensive as recreating the shape.
-     *
+     * Set the current filter. This is almost as expensive as recreating the shape. This may cause
+     * contacts to be immediately destroyed. However contacts are not created until the next world step.
+     * Sensor overlap state is also not updated until the next world step.
      * @see b2ShapeDef::filter
      */
     public static void b2Shape_SetFilter(b2ShapeId shapeId, b2Filter filter) {
@@ -4747,41 +4774,9 @@ static jclass cxxExceptionClass = NULL;
     */
 
     /**
-     * Enable sensor events for this shape. Only applies to kinematic and dynamic bodies.
-     *
-     * @warning changing this at run-time may lead to lost begin/end events
-     * @see b2ShapeDef::isSensor
-     */
-    public static void b2Shape_EnableSensorEvents(b2ShapeId shapeId, boolean flag) {
-        b2Shape_EnableSensorEvents_internal(shapeId.getPointer(), flag);
-    }
-
-    static private native void b2Shape_EnableSensorEvents_internal(long shapeId, boolean flag);/*
-    	HANDLE_JAVA_EXCEPTION_START()
-    	CHECK_AND_THROW_C_TYPE(env, bool, flag, 1, return);
-    	b2Shape_EnableSensorEvents(*(b2ShapeId*)shapeId, (bool)flag);
-    	HANDLE_JAVA_EXCEPTION_END()
-    */
-
-    /**
-     * Returns true if sensor events are enabled
-     */
-    public static boolean b2Shape_AreSensorEventsEnabled(b2ShapeId shapeId) {
-        return b2Shape_AreSensorEventsEnabled_internal(shapeId.getPointer());
-    }
-
-    static private native boolean b2Shape_AreSensorEventsEnabled_internal(long shapeId);/*
-    	HANDLE_JAVA_EXCEPTION_START()
-    	return (jboolean)b2Shape_AreSensorEventsEnabled(*(b2ShapeId*)shapeId);
-    	HANDLE_JAVA_EXCEPTION_END()
-    	return 0;
-    */
-
-    /**
      * Enable contact events for this shape. Only applies to kinematic and dynamic bodies. Ignored for sensors.
-     *
-     * @warning changing this at run-time may lead to lost begin/end events
      * @see b2ShapeDef::enableContactEvents
+     * @warning changing this at run-time may lead to lost begin/end events
      */
     public static void b2Shape_EnableContactEvents(b2ShapeId shapeId, boolean flag) {
         b2Shape_EnableContactEvents_internal(shapeId.getPointer(), flag);
@@ -4811,7 +4806,6 @@ static jclass cxxExceptionClass = NULL;
     /**
      * Enable pre-solve contact events for this shape. Only applies to dynamic bodies. These are expensive
      * and must be carefully handled due to multithreading. Ignored for sensors.
-     *
      * @see b2PreSolveFcn
      */
     public static void b2Shape_EnablePreSolveEvents(b2ShapeId shapeId, boolean flag) {
@@ -4841,7 +4835,6 @@ static jclass cxxExceptionClass = NULL;
 
     /**
      * Enable contact hit events for this shape. Ignored for sensors.
-     *
      * @see b2WorldDef#hitEventThreshold
      */
     public static void b2Shape_EnableHitEvents(b2ShapeId shapeId, boolean flag) {
@@ -4983,7 +4976,6 @@ static jclass cxxExceptionClass = NULL;
     /**
      * Allows you to change a shape to be a circle or update the current circle.
      * This does not modify the mass properties.
-     *
      * @see Box2d#b2Body_ApplyMassFromShapes
      */
     public static void b2Shape_SetCircle(b2ShapeId shapeId, b2Circle.b2CirclePointer circle) {
@@ -4999,7 +4991,6 @@ static jclass cxxExceptionClass = NULL;
     /**
      * Allows you to change a shape to be a capsule or update the current capsule.
      * This does not modify the mass properties.
-     *
      * @see Box2d#b2Body_ApplyMassFromShapes
      */
     public static void b2Shape_SetCapsule(b2ShapeId shapeId, b2Capsule.b2CapsulePointer capsule) {
@@ -5028,7 +5019,6 @@ static jclass cxxExceptionClass = NULL;
     /**
      * Allows you to change a shape to be a polygon or update the current polygon.
      * This does not modify the mass properties.
-     *
      * @see Box2d#b2Body_ApplyMassFromShapes
      */
     public static void b2Shape_SetPolygon(b2ShapeId shapeId, b2Polygon.b2PolygonPointer polygon) {
@@ -5074,7 +5064,6 @@ static jclass cxxExceptionClass = NULL;
 
     /**
      * Get the touching contact data for a shape. The provided shapeId will be either shapeIdA or shapeIdB on the contact data.
-     *
      * @note Box2D uses speculative collision so some contact points may be separated.
      * @returns the number of elements filled in the provided array
      * @warning do not ignore the return value, it specifies the valid number of elements
@@ -5094,7 +5083,6 @@ static jclass cxxExceptionClass = NULL;
     /**
      * Get the maximum capacity required for retrieving all the overlapped shapes on a sensor shape.
      * This returns 0 if the provided shape is not a sensor.
-     *
      * @param shapeId the id of a sensor shape
      * @returns the required capacity to get all the overlaps in b2Shape_GetSensorOverlaps
      */
@@ -5111,21 +5099,21 @@ static jclass cxxExceptionClass = NULL;
 
     /**
      * Get the overlapped shapes for a sensor shape.
-     *
-     * @param shapeId          the id of a sensor shape
-     * @param overlappedShapes a user allocated array that is filled with the overlapping shapes
-     * @param capacity         the capacity of overlappedShapes
+     * @param shapeId the id of a sensor shape
+     * @param overlaps a user allocated array that is filled with the overlapping shapes
+     * @param capacity the capacity of overlappedShapes
      * @returns the number of elements filled in the provided array
      * @warning do not ignore the return value, it specifies the valid number of elements
+     * @warning overlaps may contain destroyed shapes so use b2Shape_IsValid to confirm each overlap
      */
-    public static int b2Shape_GetSensorOverlaps(b2ShapeId shapeId, b2ShapeId.b2ShapeIdPointer overlappedShapes, int capacity) {
-        return b2Shape_GetSensorOverlaps_internal(shapeId.getPointer(), overlappedShapes.getPointer(), capacity);
+    public static int b2Shape_GetSensorOverlaps(b2ShapeId shapeId, b2ShapeId.b2ShapeIdPointer overlaps, int capacity) {
+        return b2Shape_GetSensorOverlaps_internal(shapeId.getPointer(), overlaps.getPointer(), capacity);
     }
 
-    static private native int b2Shape_GetSensorOverlaps_internal(long shapeId, long overlappedShapes, int capacity);/*
+    static private native int b2Shape_GetSensorOverlaps_internal(long shapeId, long overlaps, int capacity);/*
     	HANDLE_JAVA_EXCEPTION_START()
     	CHECK_AND_THROW_C_TYPE(env, int, capacity, 2, return 0);
-    	return (jint)b2Shape_GetSensorOverlaps(*(b2ShapeId*)shapeId, (b2ShapeId *)overlappedShapes, (int)capacity);
+    	return (jint)b2Shape_GetSensorOverlaps(*(b2ShapeId*)shapeId, (b2ShapeId *)overlaps, (int)capacity);
     	HANDLE_JAVA_EXCEPTION_END()
     	return 0;
     */
@@ -5148,6 +5136,7 @@ static jclass cxxExceptionClass = NULL;
 
     /**
      * Get the closest point on a shape to a target point. Target and result are in world space.
+     * todo need sample
      */
     public static b2Vec2 b2Shape_GetClosestPoint(b2ShapeId shapeId, b2Vec2 target) {
         return new b2Vec2(b2Shape_GetClosestPoint_internal(shapeId.getPointer(), target.getPointer()), true);
@@ -5164,7 +5153,6 @@ static jclass cxxExceptionClass = NULL;
 
     /**
      * Create a chain shape
-     *
      * @see b2ChainDef for details
      */
     public static b2ChainId b2CreateChain(b2BodyId bodyId, b2ChainDef.b2ChainDefPointer def) {
@@ -5241,7 +5229,6 @@ static jclass cxxExceptionClass = NULL;
 
     /**
      * Set the chain friction
-     *
      * @see b2ChainDef::friction
      */
     public static void b2Chain_SetFriction(b2ChainId chainId, float friction) {
@@ -5270,7 +5257,6 @@ static jclass cxxExceptionClass = NULL;
 
     /**
      * Set the chain restitution (bounciness)
-     *
      * @see b2ChainDef::restitution
      */
     public static void b2Chain_SetRestitution(b2ChainId chainId, float restitution) {
@@ -5342,7 +5328,7 @@ static jclass cxxExceptionClass = NULL;
      * Get the joint type
      */
     public static b2JointType b2Joint_GetType(b2JointId jointId) {
-        return b2JointType.getByIndex(b2Joint_GetType_internal(jointId.getPointer()));
+        return b2JointType.getByIndex((int) b2Joint_GetType_internal(jointId.getPointer()));
     }
 
     static private native int b2Joint_GetType_internal(long jointId);/*
@@ -5501,7 +5487,7 @@ static jclass cxxExceptionClass = NULL;
     */
 
     /**
-     * Get the current constraint force for this joint
+     * Get the current constraint force for this joint. Usually in Newtons.
      */
     public static b2Vec2 b2Joint_GetConstraintForce(b2JointId jointId) {
         return new b2Vec2(b2Joint_GetConstraintForce_internal(jointId.getPointer()), true);
@@ -5517,7 +5503,7 @@ static jclass cxxExceptionClass = NULL;
     */
 
     /**
-     * Get the current constraint torque for this joint
+     * Get the current constraint torque for this joint. Usually in Newton * meters.
      */
     public static float b2Joint_GetConstraintTorque(b2JointId jointId) {
         return b2Joint_GetConstraintTorque_internal(jointId.getPointer());
@@ -5532,7 +5518,6 @@ static jclass cxxExceptionClass = NULL;
 
     /**
      * Create a distance joint
-     *
      * @see b2DistanceJointDef for details
      */
     public static b2JointId b2CreateDistanceJoint(b2WorldId worldId, b2DistanceJointDef.b2DistanceJointDefPointer def) {
@@ -5550,9 +5535,8 @@ static jclass cxxExceptionClass = NULL;
 
     /**
      * Set the rest length of a distance joint
-     *
      * @param jointId The id for a distance joint
-     * @param length  The new distance joint length
+     * @param length The new distance joint length
      */
     public static void b2DistanceJoint_SetLength(b2JointId jointId, float length) {
         b2DistanceJoint_SetLength_internal(jointId.getPointer(), length);
@@ -5842,7 +5826,6 @@ static jclass cxxExceptionClass = NULL;
 
     /**
      * Create a motor joint
-     *
      * @see b2MotorJointDef for details
      */
     public static b2JointId b2CreateMotorJoint(b2WorldId worldId, b2MotorJointDef.b2MotorJointDefPointer def) {
@@ -5997,7 +5980,6 @@ static jclass cxxExceptionClass = NULL;
 
     /**
      * Create a mouse joint
-     *
      * @see b2MouseJointDef for details
      */
     public static b2JointId b2CreateMouseJoint(b2WorldId worldId, b2MouseJointDef.b2MouseJointDefPointer def) {
@@ -6125,7 +6107,6 @@ static jclass cxxExceptionClass = NULL;
 
     /**
      * Create a null joint.
-     *
      * @see b2NullJointDef for details
      */
     public static b2JointId b2CreateNullJoint(b2WorldId worldId, b2NullJointDef.b2NullJointDefPointer def) {
@@ -6143,7 +6124,6 @@ static jclass cxxExceptionClass = NULL;
 
     /**
      * Create a prismatic (slider) joint.
-     *
      * @see b2PrismaticJointDef for details
      */
     public static b2JointId b2CreatePrismaticJoint(b2WorldId worldId, b2PrismaticJointDef.b2PrismaticJointDefPointer def) {
@@ -6438,7 +6418,6 @@ static jclass cxxExceptionClass = NULL;
 
     /**
      * Create a revolute joint
-     *
      * @see b2RevoluteJointDef for details
      */
     public static b2JointId b2CreateRevoluteJoint(b2WorldId worldId, b2RevoluteJointDef.b2RevoluteJointDefPointer def) {
@@ -6538,7 +6517,6 @@ static jclass cxxExceptionClass = NULL;
 
     /**
      * Get the revolute joint current angle in radians relative to the reference angle
-     *
      * @see b2RevoluteJointDef::referenceAngle
      */
     public static float b2RevoluteJoint_GetAngle(b2JointId jointId) {
@@ -6719,7 +6697,6 @@ static jclass cxxExceptionClass = NULL;
 
     /**
      * Create a weld joint
-     *
      * @see b2WeldJointDef for details
      */
     public static b2JointId b2CreateWeldJoint(b2WorldId worldId, b2WeldJointDef.b2WeldJointDefPointer def) {
@@ -6872,7 +6849,6 @@ static jclass cxxExceptionClass = NULL;
 
     /**
      * Create a wheel joint
-     *
      * @see b2WheelJointDef for details
      */
     public static b2JointId b2CreateWheelJoint(b2WorldId worldId, b2WheelJointDef.b2WheelJointDefPointer def) {
@@ -7140,10 +7116,9 @@ static jclass cxxExceptionClass = NULL;
         /**
          * Prototype callback for overlap queries.
          * Called for each shape found in the query.
-         *
+         * @see Box2d#b2World_OverlapAABB
          * @return false to terminate the query.
          * @ingroup world
-         * @see Box2d#b2World_OverlapAABB
          */
         boolean b2OverlapResultFcn_call(b2ShapeId shapeId, VoidPointer context);
     }
@@ -7152,7 +7127,6 @@ static jclass cxxExceptionClass = NULL;
 
         /**
          * This function receives proxies found in the AABB query.
-         *
          * @return true if the query should continue
          */
         boolean b2TreeQueryCallbackFcn_call(int proxyId, int userData, VoidPointer context);
@@ -7170,9 +7144,10 @@ static jclass cxxExceptionClass = NULL;
          * The startIndex and endIndex are expected in the range [0, itemCount) where itemCount is the argument to b2EnqueueTaskCallback
          * below. Box2D expects startIndex < endIndex and will execute a loop like this:
          *
-         * @code{.c} for (int i = startIndex; i < endIndex; ++i)
+         * @code{.c}
+         * for (int i = startIndex; i < endIndex; ++i)
          * {
-         * DoWork();
+         * 	DoWork();
          * }
          * @endcode
          * @ingroup world
@@ -7198,15 +7173,14 @@ static jclass cxxExceptionClass = NULL;
          * return 0: terminate the ray cast
          * return fraction: clip the ray to this point
          * return 1: don't clip the ray and continue
-         *
-         * @param shapeId  the shape hit by the ray
-         * @param point    the point of initial intersection
-         * @param normal   the normal vector at the point of intersection
+         * @param shapeId the shape hit by the ray
+         * @param point the point of initial intersection
+         * @param normal the normal vector at the point of intersection
          * @param fraction the fraction along the ray at the point of intersection
-         * @param context  the user context
+         * @param context the user context
          * @return -1 to filter, 0 to terminate, fraction to clip the ray for closest hit, 1 to continue
-         * @ingroup world
          * @see Box2d#b2World_CastRay
+         * @ingroup world
          */
         float b2CastResultFcn_call(b2ShapeId shapeId, b2Vec2 point, b2Vec2 normal, float fraction, VoidPointer context);
     }
@@ -7237,7 +7211,6 @@ static jclass cxxExceptionClass = NULL;
          * - this is not called for sensors
          * - the supplied manifold has impulse values from the previous step
          * Return false if you want to disable the contact this step
-         *
          * @warning Do not attempt to modify the world inside this callback
          * @ingroup world
          */
@@ -7248,8 +7221,7 @@ static jclass cxxExceptionClass = NULL;
 
         /**
          * Prototype for user allocation function
-         *
-         * @param size      the allocation size in bytes
+         * @param size the allocation size in bytes
          * @param alignment the required alignment, guaranteed to be a power of 2
          */
         VoidPointer b2AllocFcn_call(long size, int alignment);
@@ -7269,13 +7241,13 @@ static jclass cxxExceptionClass = NULL;
          * Prototype for a contact filter callback.
          * This is called when a contact pair is considered for collision. This allows you to
          * perform custom logic to prevent collision between shapes. This is only called if
-         * one of the two shapes has custom filtering enabled. @see b2ShapeDef.
+         * one of the two shapes has custom filtering enabled.
          * Notes:
          * - this function must be thread-safe
          * - this is only called if one of the two shapes has enabled custom filtering
          * - this is called only for awake dynamic bodies
          * Return false if you want to disable the collision
-         *
+         * @see b2ShapeDef
          * @warning Do not attempt to modify the world inside this callback
          * @ingroup world
          */
@@ -7298,7 +7270,6 @@ static jclass cxxExceptionClass = NULL;
 
         /**
          * Prototype for user free function
-         *
          * @param mem the memory previously allocated through `b2AllocFcn`
          */
         void b2FreeFcn_call(VoidPointer mem);
