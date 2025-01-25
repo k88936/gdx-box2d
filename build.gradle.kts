@@ -1,6 +1,7 @@
 import com.badlogic.gdx.jnigen.commons.Architecture
 import com.badlogic.gdx.jnigen.commons.Os
-import com.badlogic.gdx.jnigen.gradle.JnigenExtension.*
+import com.badlogic.gdx.jnigen.gradle.JnigenExtension.x64
+import com.badlogic.gdx.jnigen.gradle.JnigenExtension.x86
 import kotlin.io.path.createTempDirectory
 
 plugins {
@@ -166,26 +167,8 @@ tasks.create("build_linux") {
     )
 }
 
-//tasks.create("build_ios") {
-//    group = "box2d"
-//    dependsOn(cmakeBuild(file("build/box2d/ios_iphoneos_arm64"), "ios_iphoneos_arm64", file("box2d_build/toolchain_ios.cmake"),
-//        arrayOf("-GXcode", "-DCMAKE_OSX_SYSROOT=iphoneos"), arrayOf("--target", "box2d", "--", "-sdk", "iphoneos", "-arch", "arm64")))
-//    dependsOn(cmakeBuild(file("build/box2d/ios_iphonesimulator_arm64"), "ios_iphonesimulator_arm64", file("box2d_build/toolchain_ios.cmake"),
-//        arrayOf("-GXcode", "-DCMAKE_OSX_SYSROOT=iphonesimulator"), arrayOf("--target", "box2d", "--", "-sdk", "iphonesimulator", "-arch", "arm64")))
-//    dependsOn(cmakeBuild(file("build/box2d/ios_iphonesimulator_x86_64"), "ios_iphonesimulator_x86_64", file("box2d_build/toolchain_ios.cmake"),
-//        arrayOf("-GXcode", "-DCMAKE_OSX_SYSROOT=iphonesimulator"), arrayOf("--target", "box2d", "--", "-sdk", "iphonesimulator", "-arch", "x86_64")))
-//}
-
 tasks.create("build_windows") {
     group = "box2d"
-//    dependsOn(
-//        cmakeBuild(
-//            file("build/box2d/windows_x86"),
-//            "windows_x86",
-//            file("box2d_build/toolchain_windows_i686.cmake"),
-//            otherCFlags = "-msse2"
-//        )
-//    )
     dependsOn(
         cmakeBuild(
             file("build/box2d/windows_x86_64"),
@@ -220,9 +203,6 @@ jnigen {
     }
 
     addLinux(x64, x86)
-//    addLinux(x64, ARM)
-//    addLinux(x64, RISCV)
-
     addWindows(x64, x86)
 
 
@@ -238,14 +218,12 @@ jnigen {
             "include \$(PREBUILT_STATIC_LIBRARY)"
         )
     }
-//    addIOS()
 }
 
 artifacts {
     artifacts {
         val packageTasks = listOf(
             tasks.named("jnigenPackageAllAndroid"),
-//            tasks.named("jnigenPackageAllIOS"),
             tasks.named("jnigenPackageAllDesktop")
         )
 
@@ -262,11 +240,9 @@ artifacts {
 allprojects {
     apply(plugin = "java-library")
     apply(plugin = "maven-publish")
-    apply(plugin = "signing")
 
     group = property("group") as String
     version = property("version") as String + if (isReleaseBuild) "" else "-SNAPSHOT"
-
     repositories {
         mavenCentral()
         maven {
@@ -277,6 +253,7 @@ allprojects {
         }
     }
 
+
     configure<JavaPluginExtension> {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
@@ -286,6 +263,15 @@ allprojects {
     }
 
     configure<PublishingExtension> {
+        repositories {
+            maven {
+                url = if (isReleaseBuild) uri(releaseRepositoryUrl) else uri(snapshotRepositoryUrl)
+                credentials {
+                        username = System.getenv("GITHUB_ACTOR")
+                        password = System.getenv("GITHUB_TOKEN")
+                }
+            }
+        }
         publications {
             register("mavenJava", MavenPublication::class) {
                 from(components["java"])
@@ -324,30 +310,6 @@ allprojects {
                     }
                 }
             }
-        }
-        repositories {
-            maven {
-                url = if (isReleaseBuild) uri(releaseRepositoryUrl) else uri(snapshotRepositoryUrl)
-                if (repositoryUsername.isNotEmpty() || repositoryPassword.isNotEmpty()) {
-                    credentials {
-                        username = System.getenv("GITHUB_ACTOR")
-                        password = System.getenv("GITHUB_TOKEN")
-                    }
-                }
-            }
-        }
-    }
-
-    val publishing = extensions.getByType<PublishingExtension>()
-    configure<SigningExtension> {
-        useGpgCmd()
-        sign(publishing.publications)
-    }
-
-    //Simply using "required" in signing block doesn't work because taskGraph isn't ready yet.
-    gradle.taskGraph.whenReady {
-        tasks.withType<Sign> {
-            onlyIf { isReleaseBuild }
         }
     }
 }
