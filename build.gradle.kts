@@ -1,7 +1,6 @@
 import com.badlogic.gdx.jnigen.commons.Architecture
 import com.badlogic.gdx.jnigen.commons.Os
-import com.badlogic.gdx.jnigen.gradle.JnigenExtension.x64
-import com.badlogic.gdx.jnigen.gradle.JnigenExtension.x86
+import com.badlogic.gdx.jnigen.gradle.JnigenExtension.*
 import kotlin.io.path.createTempDirectory
 
 plugins {
@@ -166,6 +165,16 @@ tasks.create("build_linux") {
         )
     )
 }
+
+//tasks.create("build_ios") {
+//    group = "box2d"
+//    dependsOn(cmakeBuild(file("build/box2d/ios_iphoneos_arm64"), "ios_iphoneos_arm64", file("box2d_build/toolchain_ios.cmake"),
+//        arrayOf("-GXcode", "-DCMAKE_OSX_SYSROOT=iphoneos"), arrayOf("--target", "box2d", "--", "-sdk", "iphoneos", "-arch", "arm64")))
+//    dependsOn(cmakeBuild(file("build/box2d/ios_iphonesimulator_arm64"), "ios_iphonesimulator_arm64", file("box2d_build/toolchain_ios.cmake"),
+//        arrayOf("-GXcode", "-DCMAKE_OSX_SYSROOT=iphonesimulator"), arrayOf("--target", "box2d", "--", "-sdk", "iphonesimulator", "-arch", "arm64")))
+//    dependsOn(cmakeBuild(file("build/box2d/ios_iphonesimulator_x86_64"), "ios_iphonesimulator_x86_64", file("box2d_build/toolchain_ios.cmake"),
+//        arrayOf("-GXcode", "-DCMAKE_OSX_SYSROOT=iphonesimulator"), arrayOf("--target", "box2d", "--", "-sdk", "iphonesimulator", "-arch", "x86_64")))
+//}
 
 tasks.create("build_windows") {
     group = "box2d"
