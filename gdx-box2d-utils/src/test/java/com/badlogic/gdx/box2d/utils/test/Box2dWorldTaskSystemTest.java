@@ -27,7 +27,6 @@ public class Box2dWorldTaskSystemTest {
 
         b2WorldId worldId = b2CreateWorld(worldDef.asPointer());
         b2BodyId[] bodies = new b2BodyId[e_count];
-
         {
             b2BodyDef bd = b2DefaultBodyDef();
             bd.position().x(0.0f);
@@ -102,9 +101,13 @@ public class Box2dWorldTaskSystemTest {
             b2Rot rot2 = finalRotations[1][i];
 
             assertEquals(p1.x(), p2.x());
+            System.out.println(p1.x());
             assertEquals(p1.y(), p2.y());
+            System.out.println(p1.y());
             assertEquals(rot1.c(), rot2.c());
+            System.out.println(rot1.c());
             assertEquals(rot1.s(), rot2.s());
+            System.out.println(rot1.s());
         }
     }
 

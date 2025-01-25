@@ -12,10 +12,12 @@ val isReleaseBuild: Boolean
     get() = project.hasProperty("RELEASE")
 
 val releaseRepositoryUrl: String
-    get() = project.findProperty("RELEASE_REPOSITORY_URL")?.toString() ?: "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+    get() = project.findProperty("RELEASE_REPOSITORY_URL")?.toString()
+        ?: "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
 
 val snapshotRepositoryUrl: String
-    get() = project.findProperty("SNAPSHOT_REPOSITORY_URL")?.toString() ?: "https://oss.sonatype.org/content/repositories/snapshots/"
+    get() = project.findProperty("SNAPSHOT_REPOSITORY_URL")?.toString()
+        ?: "https://oss.sonatype.org/content/repositories/snapshots/"
 
 val repositoryUsername: String
     get() = project.findProperty("MAVEN_USERNAME")?.toString() ?: ""
@@ -72,8 +74,10 @@ tasks.create("setup_box2d") {
     }
 }
 
-fun cmakeBuild(installDir: File, taskName: String, toolchainFile: File, extraFlags: Array<String> = emptyArray(),
-               buildFlags: Array<String> = emptyArray(), installFlags: Array<String> = emptyArray(), otherCFlags: String = ""): Task {
+fun cmakeBuild(
+    installDir: File, taskName: String, toolchainFile: File, extraFlags: Array<String> = emptyArray(),
+    buildFlags: Array<String> = emptyArray(), installFlags: Array<String> = emptyArray(), otherCFlags: String = ""
+): Task {
     return tasks.create("build_box2d_${taskName}") {
         group = "box2d"
         dependsOn("setup_box2d")
@@ -84,7 +88,8 @@ fun cmakeBuild(installDir: File, taskName: String, toolchainFile: File, extraFla
             installDir.mkdirs()
             exec {
                 commandLine = listOf("cmake")
-                args = listOf("-B", tmpDir.absolutePath, "-S", file("build/box2d_patched").absolutePath,
+                args = listOf(
+                    "-B", tmpDir.absolutePath, "-S", file("build/box2d_patched").absolutePath,
                     "-DBOX2D_SAMPLES=OFF",
                     "-DBOX2D_VALIDATE=OFF",
                     "-DBOX2D_SANITIZE=OFF",
@@ -97,7 +102,8 @@ fun cmakeBuild(installDir: File, taskName: String, toolchainFile: File, extraFla
                     "-DCMAKE_INSTALL_LIBDIR=${installDir.toPath().resolve("libs")}",
                     "-DCMAKE_TOOLCHAIN_FILE=${toolchainFile.absolutePath}",
                     "-DCMAKE_BUILD_TYPE=Release",
-                    *extraFlags)
+                    *extraFlags
+                )
             }
 
             exec {
@@ -123,17 +129,41 @@ fun cmakeBuild(installDir: File, taskName: String, toolchainFile: File, extraFla
 
 tasks.create("build_android") {
     group = "box2d"
-    for (abi in  arrayOf("x86", "x86_64", "armeabi-v7a", "arm64-v8a")) {
-        dependsOn(cmakeBuild(file("build/box2d/android/${abi}"), "android_${abi}", file("${System.getenv("NDK_HOME")}/build/cmake/android.toolchain.cmake"),
-            arrayOf("-DANDROID_ABI=${abi}", "-DANDROID_PLATFORM=android-21", "-DANDROID_STL=c++_shared")))
+    for (abi in arrayOf("x86", "x86_64", "armeabi-v7a", "arm64-v8a")) {
+        dependsOn(
+            cmakeBuild(
+                file("build/box2d/android/${abi}"),
+                "android_${abi}",
+                file("${System.getenv("NDK_HOME")}/build/cmake/android.toolchain.cmake"),
+                arrayOf("-DANDROID_ABI=${abi}", "-DANDROID_PLATFORM=android-21", "-DANDROID_STL=c++_shared")
+            )
+        )
     }
 }
 
 tasks.create("build_linux") {
     group = "box2d"
-    dependsOn(cmakeBuild(file("build/box2d/linux_arm64"), "linux_arm64", file("box2d_build/toolchain_linux_arm64.cmake")))
-    dependsOn(cmakeBuild(file("build/box2d/linux_riscv64"), "linux_riscv64", file("box2d_build/toolchain_linux_riscv64.cmake")))
-    dependsOn(cmakeBuild(file("build/box2d/linux_x86_64"), "linux_x86_64", file("box2d_build/toolchain_linux_x86_64.cmake")))
+    dependsOn(
+        cmakeBuild(
+            file("build/box2d/linux_arm64"),
+            "linux_arm64",
+            file("box2d_build/toolchain_linux_arm64.cmake")
+        )
+    )
+    dependsOn(
+        cmakeBuild(
+            file("build/box2d/linux_riscv64"),
+            "linux_riscv64",
+            file("box2d_build/toolchain_linux_riscv64.cmake")
+        )
+    )
+    dependsOn(
+        cmakeBuild(
+            file("build/box2d/linux_x86_64"),
+            "linux_x86_64",
+            file("box2d_build/toolchain_linux_x86_64.cmake")
+        )
+    )
 }
 
 //tasks.create("build_ios") {
@@ -148,8 +178,21 @@ tasks.create("build_linux") {
 
 tasks.create("build_windows") {
     group = "box2d"
-    dependsOn(cmakeBuild(file("build/box2d/windows_x86"), "windows_x86", file("box2d_build/toolchain_windows_i686.cmake"), otherCFlags = "-msse2"))
-    dependsOn(cmakeBuild(file("build/box2d/windows_x86_64"), "windows_x86_64", file("box2d_build/toolchain_windows_x86_64.cmake")))
+    dependsOn(
+        cmakeBuild(
+            file("build/box2d/windows_x86"),
+            "windows_x86",
+            file("box2d_build/toolchain_windows_i686.cmake"),
+            otherCFlags = "-msse2"
+        )
+    )
+    dependsOn(
+        cmakeBuild(
+            file("build/box2d/windows_x86_64"),
+            "windows_x86_64",
+            file("box2d_build/toolchain_windows_x86_64.cmake")
+        )
+    )
 }
 
 jnigen {
@@ -166,7 +209,8 @@ jnigen {
         if (os == Os.IOS)
             name = "ios_" + targetType.platformName
 
-        val arch = architecture.name.lowercase() + (if(architecture == Architecture.x86 && bitness != Architecture.Bitness._32) "_" else "") + bitness.toSuffix()
+        val arch =
+            architecture.name.lowercase() + (if (architecture == Architecture.x86 && bitness != Architecture.Bitness._32) "_" else "") + bitness.toSuffix()
         val combined = name + "_" + arch
 
         headerDirs += arrayOf("build/box2d/${combined}/include/")
@@ -192,7 +236,8 @@ jnigen {
             "LOCAL_MODULE := static_box2d",
             "LOCAL_SRC_FILES := \$(realpath ${file("build/box2d/android").absoluteFile}/\$(TARGET_ARCH_ABI)/libs/libbox2d.a)",
             "LOCAL_EXPORT_C_INCLUDES := \$(realpath ${file("build/box2d/android/\$(TARGET_ARCH_ABI)/include/").absoluteFile})",
-            "include \$(PREBUILT_STATIC_LIBRARY)")
+            "include \$(PREBUILT_STATIC_LIBRARY)"
+        )
     }
 //    addIOS()
 }
@@ -283,12 +328,11 @@ allprojects {
         }
         repositories {
             maven {
-                url = if(isReleaseBuild) uri(releaseRepositoryUrl) else uri(snapshotRepositoryUrl)
-
+                url = if (isReleaseBuild) uri(releaseRepositoryUrl) else uri(snapshotRepositoryUrl)
                 if (repositoryUsername.isNotEmpty() || repositoryPassword.isNotEmpty()) {
                     credentials {
-                        username = repositoryUsername
-                        password = repositoryPassword
+                        username = System.getenv("GITHUB_ACTOR")
+                        password = System.getenv("GITHUB_TOKEN")
                     }
                 }
             }
