@@ -143,20 +143,20 @@ tasks.create("build_android") {
 
 tasks.create("build_linux") {
     group = "box2d"
-    dependsOn(
-        cmakeBuild(
-            file("build/box2d/linux_arm64"),
-            "linux_arm64",
-            file("box2d_build/toolchain_linux_arm64.cmake")
-        )
-    )
-    dependsOn(
-        cmakeBuild(
-            file("build/box2d/linux_riscv64"),
-            "linux_riscv64",
-            file("box2d_build/toolchain_linux_riscv64.cmake")
-        )
-    )
+//    dependsOn(
+//        cmakeBuild(
+//            file("build/box2d/linux_arm64"),
+//            "linux_arm64",
+//            file("box2d_build/toolchain_linux_arm64.cmake")
+//        )
+//    )
+//    dependsOn(
+//        cmakeBuild(
+//            file("build/box2d/linux_riscv64"),
+//            "linux_riscv64",
+//            file("box2d_build/toolchain_linux_riscv64.cmake")
+//        )
+//    )
     dependsOn(
         cmakeBuild(
             file("build/box2d/linux_x86_64"),
@@ -178,14 +178,14 @@ tasks.create("build_linux") {
 
 tasks.create("build_windows") {
     group = "box2d"
-    dependsOn(
-        cmakeBuild(
-            file("build/box2d/windows_x86"),
-            "windows_x86",
-            file("box2d_build/toolchain_windows_i686.cmake"),
-            otherCFlags = "-msse2"
-        )
-    )
+//    dependsOn(
+//        cmakeBuild(
+//            file("build/box2d/windows_x86"),
+//            "windows_x86",
+//            file("box2d_build/toolchain_windows_i686.cmake"),
+//            otherCFlags = "-msse2"
+//        )
+//    )
     dependsOn(
         cmakeBuild(
             file("build/box2d/windows_x86_64"),
@@ -220,10 +220,9 @@ jnigen {
     }
 
     addLinux(x64, x86)
-    addLinux(x64, ARM)
-    addLinux(x64, RISCV)
+//    addLinux(x64, ARM)
+//    addLinux(x64, RISCV)
 
-    addWindows(x32, x86)
     addWindows(x64, x86)
 
 
