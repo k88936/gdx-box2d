@@ -35,7 +35,8 @@ jobs:
           java-version: '17'
 
       - name: Build box2d
-        run: ./gradlew build_linux build_android build_windows
+        run: ./gradlew build_linux
+#        run: ./gradlew build_linux build_android build_windows
 
       - name: Initialize jnigen
         run: ./gradlew jnigen
