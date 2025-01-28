@@ -24,6 +24,7 @@ static jclass cxxExceptionClass = NULL;
         b2World_OverlapViewport_internal(worldId.getPointer(), lx, ly, ux, uy, fcn.getPointer());
     }
 
+
     /*JNI
 typedef bool entityCallback(long entityId);
 
@@ -31,7 +32,9 @@ bool viewportQuery_aux(b2ShapeId shapeId, void* context)
 {
     auto callback = (entityCallback*)context;
     return callback((long)b2Body_GetUserData(b2Shape_GetBody(shapeId)));
-}     */
+}
+*/
+
 
     private static native void b2World_OverlapViewport_internal(long worldId, float lx, float ly, float ux, float uy, long fcn);/*
     	HANDLE_JAVA_EXCEPTION_START()
