@@ -11,7 +11,6 @@ jobs:
           sudo apt update
           sudo apt install -y --force-yes gcc g++
           sudo apt install -y --force-yes gcc-aarch64-linux-gnu g++-aarch64-linux-gnu libc6-dev-arm64-cross
-          sudo apt install -y --force-yes gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf libc6-dev-armhf-cross
           sudo apt install -y --force-yes gcc-riscv64-linux-gnu g++-riscv64-linux-gnu libc6-dev-riscv64-cross
           sudo apt install -y --force-yes mingw-w64 lib32z1
 
@@ -36,12 +35,14 @@ jobs:
           java-version: '17'
 
       - name: Build box2d
+#        run: ./gradlew build_linux
         run: ./gradlew build_linux build_android build_windows
 
       - name: Initialize jnigen
         run: ./gradlew jnigen
 
       - name: Build natives
+#        run: ./gradlew jnigenBuildAllLinux
         run: ./gradlew jnigenBuildAllLinux jnigenBuildAllWindows jnigenBuildAllAndroid
 
 
