@@ -10,18 +10,18 @@ jobs:
         run: |
           sudo apt update
           sudo apt install -y --force-yes gcc g++
-#          sudo apt install -y --force-yes gcc-aarch64-linux-gnu g++-aarch64-linux-gnu libc6-dev-arm64-cross
-#          sudo apt install -y --force-yes gcc-riscv64-linux-gnu g++-riscv64-linux-gnu libc6-dev-riscv64-cross
+          sudo apt install -y --force-yes gcc-aarch64-linux-gnu g++-aarch64-linux-gnu libc6-dev-arm64-cross
+          sudo apt install -y --force-yes gcc-riscv64-linux-gnu g++-riscv64-linux-gnu libc6-dev-riscv64-cross
           sudo apt install -y --force-yes mingw-w64 lib32z1
 
-#      - name: Download Android NDK
-#        run: |
-#          mkdir -p $HOME/android-ndk
-#          cd $HOME/android-ndk
-#          wget https://dl.google.com/android/repository/android-ndk-r25c-linux.zip -O android-ndk.zip
-#          echo "769ee342ea75f80619d985c2da990c48b3d8eaf45f48783a2d48870d04b46108  android-ndk.zip" | sha256sum --check
-#          unzip android-ndk.zip
-#          echo "NDK_HOME=$HOME/android-ndk/android-ndk-r25c" >> $GITHUB_ENV
+      - name: Download Android NDK
+        run: |
+          mkdir -p $HOME/android-ndk
+          cd $HOME/android-ndk
+          wget https://dl.google.com/android/repository/android-ndk-r25c-linux.zip -O android-ndk.zip
+          echo "769ee342ea75f80619d985c2da990c48b3d8eaf45f48783a2d48870d04b46108  android-ndk.zip" | sha256sum --check
+          unzip android-ndk.zip
+          echo "NDK_HOME=$HOME/android-ndk/android-ndk-r25c" >> $GITHUB_ENV
 
       - uses: actions/checkout@v4
         with:
@@ -35,14 +35,12 @@ jobs:
           java-version: '17'
 
       - name: Build box2d
-#        run: ./gradlew build_linux
         run: ./gradlew build_linux build_android build_windows
 
       - name: Initialize jnigen
         run: ./gradlew jnigen
 
       - name: Build natives
-#        run: ./gradlew jnigenBuildAllLinux
         run: ./gradlew jnigenBuildAllLinux jnigenBuildAllWindows jnigenBuildAllAndroid
 
 
