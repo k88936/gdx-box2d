@@ -3,6 +3,7 @@ publish.sh
 build/
 box2d/
 cmake-build-debug/
+cmake-build-debug-mingw/
 box2d/cmake-build-debug/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
