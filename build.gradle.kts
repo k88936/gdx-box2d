@@ -6,6 +6,7 @@ import kotlin.io.path.createTempDirectory
 plugins {
     id("java-library")
     id("com.badlogicgames.jnigen.jnigen-gradle") version "3.0.0-SNAPSHOT"
+
 }
 
 val isReleaseBuild: Boolean
@@ -26,10 +27,12 @@ val repositoryPassword: String
     get() = project.findProperty("MAVEN_PASSWORD")?.toString() ?: ""
 
 val jnigenVersion = property("jnigen.version") as String
+val gdxVersion = property("gdx.version") as String
 
 dependencies {
     api("com.badlogicgames.jnigen:jnigen-loader:${jnigenVersion}")
     api("com.badlogicgames.jnigen:jnigen-runtime:${jnigenVersion}")
+    api ("com.badlogicgames.gdx:gdx:${gdxVersion}")
     implementation("com.badlogicgames.jnigen:jnigen-runtime-platform:${jnigenVersion}:natives-desktop")
     implementation("com.badlogicgames.jnigen:jnigen-runtime-platform:${jnigenVersion}:natives-arm64-v8a")
     implementation("com.badlogicgames.jnigen:jnigen-runtime-platform:${jnigenVersion}:natives-armeabi-v7a")

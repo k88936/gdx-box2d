@@ -3615,7 +3615,7 @@ static jclass cxxExceptionClass = NULL;
         b2Body_SetUserData_internal(bodyId.getPointer(), userData.getPointer());
     }
 
-    static private native void b2Body_SetUserData_internal(long bodyId, long userData);/*
+    static native void b2Body_SetUserData_internal(long bodyId, long userData);/*
     	HANDLE_JAVA_EXCEPTION_START()
     	b2Body_SetUserData(*(b2BodyId*)bodyId, (void *)userData);
     	HANDLE_JAVA_EXCEPTION_END()
@@ -3628,7 +3628,7 @@ static jclass cxxExceptionClass = NULL;
         return new VoidPointer(b2Body_GetUserData_internal(bodyId.getPointer()), false);
     }
 
-    static private native long b2Body_GetUserData_internal(long bodyId);/*
+    static native long b2Body_GetUserData_internal(long bodyId);/*
     	HANDLE_JAVA_EXCEPTION_START()
     	return (jlong)b2Body_GetUserData(*(b2BodyId*)bodyId);
     	HANDLE_JAVA_EXCEPTION_END()

@@ -1,5 +1,9 @@
 .gradle
+publish.sh
 build/
+box2d/
+cmake-build-debug/
+box2d/cmake-build-debug/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
