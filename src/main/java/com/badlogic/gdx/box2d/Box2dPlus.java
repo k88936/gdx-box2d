@@ -1,6 +1,7 @@
 package com.badlogic.gdx.box2d;
 
 import com.badlogic.gdx.box2d.structs.*;
+import com.badlogic.gdx.box2d.enums.*;
 import com.badlogic.gdx.jnigen.runtime.c.CTypeInfo;
 import com.badlogic.gdx.jnigen.runtime.closure.Closure;
 import com.badlogic.gdx.jnigen.runtime.closure.ClosureObject;
@@ -20,8 +21,8 @@ static jclass illegalArgumentExceptionClass = NULL;
 static jclass cxxExceptionClass = NULL;
 */
 
-    public static void b2World_OverlapViewport(b2WorldId worldId, float lx, float ly, float ux, float uy, ClosureObject<EntityCallback> fcn) {
-        b2World_OverlapViewport_internal(worldId.getPointer(), lx, ly, ux, uy, fcn.getPointer());
+    public static void b2WorldOverlapAABB(b2WorldId worldId, float lx, float ly, float ux, float uy, ClosureObject<EntityCallback> fcn) {
+        b2WorldOverlapAABB_internal(worldId.getPointer(), lx, ly, ux, uy, fcn.getPointer());
     }
 
 
@@ -36,7 +37,7 @@ bool viewportQuery_aux(b2ShapeId shapeId, void* context)
 */
 
 
-    private static native void b2World_OverlapViewport_internal(long worldId, float lx, float ly, float ux, float uy, long fcn);/*
+    private static native void b2WorldOverlapAABB_internal(long worldId, float lx, float ly, float ux, float uy, long fcn);/*
     	HANDLE_JAVA_EXCEPTION_START()
     	b2AABB box;
     	box.lowerBound={lx,ly};
@@ -89,42 +90,57 @@ bool viewportQuery_aux(b2ShapeId shapeId, void* context)
     	return 0;
     */
 
-    public static Matrix3 b2ToGDX(b2Transform b2Transform, Matrix3 gdx) {
-        float c = b2Transform.q().c();
-        float s = b2Transform.q().s();
+    public static Matrix3 b2ToGDX(b2Transform b2, Matrix3 gdx) {
+        float c = b2.q().c();
+        float s = b2.q().s();
         gdx.val[0] = c;
         gdx.val[1] = s;
         gdx.val[2] = 0;
         gdx.val[3] = -s;
         gdx.val[4] = c;
         gdx.val[5] = 0;
-        gdx.val[6] = b2Transform.p().x();
-        gdx.val[7] = b2Transform.p().y();
+        gdx.val[6] = b2.p().x();
+        gdx.val[7] = b2.p().y();
         gdx.val[8] = 1;
         return gdx;
     }
 
-    public static Affine2 b2ToGDX(b2Transform b2Transform, Affine2 gdx) {
-        float c = b2Transform.q().c();
-        float s = b2Transform.q().s();
+
+    public static Affine2 b2ToGDX(b2Transform b2, Affine2 gdx) {
+        float c = b2.q().c();
+        float s = b2.q().s();
         gdx.m00 = c;
         gdx.m01 = -s;
-        gdx.m02 = b2Transform.p().x();
+        gdx.m02 = b2.p().x();
         gdx.m10 = s;
         gdx.m11 = c;
-        gdx.m12 = b2Transform.p().y();
+        gdx.m12 = b2.p().y();
         return gdx;
     }
 
-    public static Vector2 b2ToGDX(b2Vec2 b2Vec2, Vector2 gdx) {
-        gdx.x = b2Vec2.x();
-        gdx.y = b2Vec2.y();
-        return gdx;
+    public static b2Transform GDXTob2(Affine2 gdx, b2Transform b2) {
+        b2.p().x(gdx.m02);
+        b2.p().y(gdx.m12);
+        b2.q().c(gdx.m00);
+        b2.q().s(gdx.m10);
+        return b2;
+
     }
 
-    public static Matrix3 b2ToGDX(b2Rot b2Rot, Matrix3 gdx) {
-        float c = b2Rot.c();
-        float s = b2Rot.s();
+    public static Vector2 b2ToGDX(b2Vec2 b2, Vector2 gdx) {
+        gdx.x = b2.x();
+        gdx.y = b2.y();
+        return gdx;
+    }
+    public static  b2Vec2 GDXTob2(Vector2 gdx, b2Vec2 b2) {
+        b2.x(gdx.x);
+        b2.y(gdx.y);
+        return b2;
+    }
+
+    public static Matrix3 b2ToGDX(b2Rot b2, Matrix3 gdx) {
+        float c = b2.c();
+        float s = b2.s();
         gdx.val[0] = c;
         gdx.val[1] = s;
         gdx.val[2] = 0;
@@ -147,6 +163,11 @@ bool viewportQuery_aux(b2ShapeId shapeId, void* context)
         gdx.m11 = c;
         gdx.m12 = 0;
         return gdx;
+    }
+    public b2Rot GDXTob2(Affine2 gdx, b2Rot b2) {
+        b2.c(gdx.m00);
+        b2.s(gdx.m10);
+        return b2;
     }
 
     public interface EntityCallback extends Closure {
