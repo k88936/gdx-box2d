@@ -21,28 +21,41 @@ static jclass illegalArgumentExceptionClass = NULL;
 static jclass cxxExceptionClass = NULL;
 */
 
-    public static void b2WorldOverlapAABB(b2WorldId worldId, float lx, float ly, float ux, float uy, ClosureObject<EntityCallback> fcn) {
-        b2WorldOverlapAABB_internal(worldId.getPointer(), lx, ly, ux, uy, fcn.getPointer());
-    }
-
 
     /*JNI
 typedef bool entityCallback(long entityId);
+*/
 
-bool viewportQuery_aux(b2ShapeId shapeId, void* context)
+    /*JNI
+bool overlapQuery_aux(b2ShapeId shapeId, void* context)
 {
     auto callback = (entityCallback*)context;
     return callback((long)b2Body_GetUserData(b2Shape_GetBody(shapeId)));
 }
 */
-
+    public static void b2WorldOverlapAABB(b2WorldId worldId, float lx, float ly, float ux, float uy, ClosureObject<EntityCallback> fcn) {
+        b2WorldOverlapAABB_internal(worldId.getPointer(), lx, ly, ux, uy, fcn.getPointer());
+    }
 
     private static native void b2WorldOverlapAABB_internal(long worldId, float lx, float ly, float ux, float uy, long fcn);/*
     	HANDLE_JAVA_EXCEPTION_START()
     	b2AABB box;
     	box.lowerBound={lx,ly};
     	box.upperBound={ux,uy};
-        b2World_OverlapAABB(*(b2WorldId*)worldId, box, b2DefaultQueryFilter(), viewportQuery_aux,(void*)fcn);
+        b2World_OverlapAABB(*(b2WorldId*)worldId, box, b2DefaultQueryFilter(), overlapQuery_aux, (void*)fcn);
+        HANDLE_JAVA_EXCEPTION_END()
+    */
+
+    public static void b2WorldOverlapSquare(b2WorldId worldId, float size, Affine2 transform, ClosureObject<EntityCallback> fcn) {
+        b2WorldOverlapSquare_internal(worldId.getPointer(), size, transform.m00, transform.m10, transform.m02, transform.m12, fcn.getPointer());
+    }
+
+    static private native void b2WorldOverlapSquare_internal(long worldId, float size, float transform_c, float transform_s, float transform_x, float transform_y, long fcn);/*
+        HANDLE_JAVA_EXCEPTION_START()
+        b2Polygon polygon = b2MakeSquare(size);
+        b2Transform transform = {b2Vec2{transform_x, transform_y}, b2Rot{transform_c, transform_s}};
+        b2World_OverlapPolygon(*(b2WorldId*)worldId, &polygon, transform, b2DefaultQueryFilter(), overlapQuery_aux,
+                               (void*)fcn);
         HANDLE_JAVA_EXCEPTION_END()
     */
 
@@ -105,7 +118,6 @@ bool viewportQuery_aux(b2ShapeId shapeId, void* context)
         return gdx;
     }
 
-
     public static Affine2 b2ToGDX(b2Transform b2, Affine2 gdx) {
         float c = b2.q().c();
         float s = b2.q().s();
@@ -132,7 +144,8 @@ bool viewportQuery_aux(b2ShapeId shapeId, void* context)
         gdx.y = b2.y();
         return gdx;
     }
-    public static  b2Vec2 GDXTob2(Vector2 gdx, b2Vec2 b2) {
+
+    public static b2Vec2 GDXTob2(Vector2 gdx, b2Vec2 b2) {
         b2.x(gdx.x);
         b2.y(gdx.y);
         return b2;
@@ -164,11 +177,20 @@ bool viewportQuery_aux(b2ShapeId shapeId, void* context)
         gdx.m12 = 0;
         return gdx;
     }
-    public b2Rot GDXTob2(Affine2 gdx, b2Rot b2) {
+
+    public static b2Rot GDXTob2(Affine2 gdx, b2Rot b2) {
         b2.c(gdx.m00);
         b2.s(gdx.m10);
         return b2;
     }
+
+
+    public static b2Vec2 GDXTob2(Affine2 gdx, b2Vec2 b2) {
+        b2.x(gdx.m02);
+        b2.y(gdx.m12);
+        return b2;
+    }
+
 
     public interface EntityCallback extends Closure {
 
