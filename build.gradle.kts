@@ -122,17 +122,10 @@ fun cmakeBuild(
     }
 }
 
-//tasks.create("build_macos") {
-//    group = "box2d"
-//    dependsOn(cmakeBuild(file("build/box2d/macosx_arm64"), "macosx_arm64", file("box2d_build/toolchain_macos.cmake"),
-//        arrayOf("-DCMAKE_OSX_ARCHITECTURES=arm64", "-DCMAKE_SYSTEM_PROCESSOR=aarch64")))
-//    dependsOn(cmakeBuild(file("build/box2d/macosx_x86_64"), "macosx_x86_64", file("box2d_build/toolchain_macos.cmake"),
-//        arrayOf("-DCMAKE_OSX_ARCHITECTURES=x86_64", "-DCMAKE_SYSTEM_PROCESSOR=x86_64")))
-//}
 
 tasks.create("build_android") {
     group = "box2d"
-    for (abi in arrayOf("x86", "x86_64", "armeabi-v7a", "arm64-v8a")) {
+    for (abi in arrayOf( "x86_64","arm64-v8a")) {
         dependsOn(
             cmakeBuild(
                 file("build/box2d/android/${abi}"),
@@ -169,15 +162,7 @@ tasks.create("build_linux") {
     )
 }
 
-//tasks.create("build_ios") {
-//    group = "box2d"
-//    dependsOn(cmakeBuild(file("build/box2d/ios_iphoneos_arm64"), "ios_iphoneos_arm64", file("box2d_build/toolchain_ios.cmake"),
-//        arrayOf("-GXcode", "-DCMAKE_OSX_SYSROOT=iphoneos"), arrayOf("--target", "box2d", "--", "-sdk", "iphoneos", "-arch", "arm64")))
-//    dependsOn(cmakeBuild(file("build/box2d/ios_iphonesimulator_arm64"), "ios_iphonesimulator_arm64", file("box2d_build/toolchain_ios.cmake"),
-//        arrayOf("-GXcode", "-DCMAKE_OSX_SYSROOT=iphonesimulator"), arrayOf("--target", "box2d", "--", "-sdk", "iphonesimulator", "-arch", "arm64")))
-//    dependsOn(cmakeBuild(file("build/box2d/ios_iphonesimulator_x86_64"), "ios_iphonesimulator_x86_64", file("box2d_build/toolchain_ios.cmake"),
-//        arrayOf("-GXcode", "-DCMAKE_OSX_SYSROOT=iphonesimulator"), arrayOf("--target", "box2d", "--", "-sdk", "iphonesimulator", "-arch", "x86_64")))
-//}
+
 
 tasks.create("build_windows") {
     group = "box2d"
@@ -201,8 +186,6 @@ jnigen {
 
     all {
         var name = os.name.lowercase()
-        if (os == Os.IOS)
-            name = "ios_" + targetType.platformName
 
         val arch =
             architecture.name.lowercase() + (if (architecture == Architecture.x86 && bitness != Architecture.Bitness._32) "_" else "") + bitness.toSuffix()
@@ -210,9 +193,13 @@ jnigen {
 
         headerDirs += arrayOf("build/box2d/${combined}/include/")
 //        cFlags += " -std=c11 -fexceptions -DB2_ENABLE_ASSERT "
-        cFlags += " -std=c11 -fexceptions -DB2_ENABLE_ASSERT -fpermissive"
+        cFlags += " -std=c11 -fexceptions -DB2_ENABLE_ASSERT " +
+//                "-fpermissive " +
+                "-m64"
 //        cppFlags += " -std=c++11 -fexceptions -DB2_ENABLE_ASSERT"
-        cppFlags += " -std=c++11 -fexceptions -DB2_ENABLE_ASSERT -fpermissive"
+        cppFlags += " -std=c++11 -fexceptions -DB2_ENABLE_ASSERT " +
+//                "-fpermissive " +
+                "-m64"
         libraries += file("build/box2d/${combined}/libs/libbox2d.a").absolutePath
     }
 
