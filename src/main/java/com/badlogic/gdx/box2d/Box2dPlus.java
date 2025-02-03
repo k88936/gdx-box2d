@@ -1,7 +1,6 @@
 package com.badlogic.gdx.box2d;
 
 import com.badlogic.gdx.box2d.structs.*;
-import com.badlogic.gdx.box2d.enums.*;
 import com.badlogic.gdx.jnigen.runtime.c.CTypeInfo;
 import com.badlogic.gdx.jnigen.runtime.closure.Closure;
 import com.badlogic.gdx.jnigen.runtime.closure.ClosureObject;
@@ -30,7 +29,7 @@ typedef bool entityCallback(long entityId);
 bool overlapQuery_aux(b2ShapeId shapeId, void* context)
 {
     auto callback = (entityCallback*)context;
-    return callback((long)b2Body_GetUserData(b2Shape_GetBody(shapeId)));
+    return callback((long long)b2Body_GetUserData(b2Shape_GetBody(shapeId)));
 }
 */
     public static void b2WorldOverlapAABB(b2WorldId worldId, float lx, float ly, float ux, float uy, ClosureObject<EntityCallback> fcn) {
@@ -59,14 +58,85 @@ bool overlapQuery_aux(b2ShapeId shapeId, void* context)
         HANDLE_JAVA_EXCEPTION_END()
     */
 
-    public static void b2Body_SetRawUserData(b2BodyId bodyId, long userData) {
+    public static void b2BodySetRawUserData(b2BodyId bodyId, long userData) {
         Box2d.b2Body_SetUserData_internal(bodyId.getPointer(), userData);
     }
 
-    public static long b2Body_GetRawUserData(b2BodyId bodyId) {
+    public static long b2BodyGetRawUserData(b2BodyId bodyId) {
         return Box2d.b2Body_GetUserData_internal(bodyId.getPointer());
     }
 
+    public static b2JointId b2ConnectBlockByWeldJoint(b2WorldId worldId, b2BodyId bodyIdA, b2BodyId bodyIdB, Vector2 localAnchorA, Vector2 localAnchorB, float referenceAngle) {
+        return new b2JointId(b2ConnectBlockByWeldJoint_internal(worldId.getPointer(), bodyIdA.getPointer(), bodyIdB.getPointer(), localAnchorA.x, localAnchorA.y, localAnchorB.x, localAnchorB.y, referenceAngle), true);
+    }
+
+    static private native long b2ConnectBlockByWeldJoint_internal(long worldId, long bodyIdA, long bodyIdB, float localAnchorAx, float localAnchorAy, float localAnchorBx, float localAnchorBy, float referenceAngle);/*
+    	HANDLE_JAVA_EXCEPTION_START()
+        b2JointId* _ret = (b2JointId*)malloc(sizeof(b2JointId));
+        b2WeldJointDef def = b2DefaultWeldJointDef();
+        def.bodyIdA = *(b2BodyId*)bodyIdA;
+        def.bodyIdB = *(b2BodyId*)bodyIdB;
+        def.angularHertz = 0;
+        def.linearHertz = 0;
+        def.angularDampingRatio = 100;
+        def.linearDampingRatio = 100;
+        def.referenceAngle = referenceAngle;
+        def.collideConnected=true;
+        def.localAnchorA = b2Vec2{localAnchorAx, localAnchorAy};
+        def.localAnchorB = b2Vec2{localAnchorBx, localAnchorBy};
+        *_ret = b2CreateWeldJoint(*(b2WorldId*)worldId, &def);
+        return (jlong)_ret;
+    	HANDLE_JAVA_EXCEPTION_END()
+    	return 0;
+    */
+
+    public static b2JointId b2ConnectBlockByRevoluteJoint(b2WorldId worldId, b2BodyId bodyIdA, b2BodyId bodyIdB, Vector2 localAnchor, float angleLimitL, float angleLimitU, float maxTorch) {
+        return new b2JointId(b2ConnectBlockByRevoluteJoint_internal(worldId.getPointer(), bodyIdA.getPointer(), bodyIdB.getPointer(), localAnchor.x, localAnchor.y, localAnchor.x, localAnchor.y, angleLimitL, angleLimitU, maxTorch), true);
+    }
+
+    static private native long b2ConnectBlockByRevoluteJoint_internal(long worldId, long bodyIdA, long bodyIdB, float localAnchorAx, float localAnchorAy, float localAnchorBx, float localAnchorBy, float angleLimitL, float angleLimitU, float maxTorch);/*
+        HANDLE_JAVA_EXCEPTION_START()
+        b2RevoluteJointDef def = b2DefaultRevoluteJointDef();
+        def.bodyIdA = *(b2BodyId*)bodyIdA;
+        def.bodyIdB = *(b2BodyId*)bodyIdB;
+        def.localAnchorA = b2Vec2{localAnchorAx, localAnchorAy};
+        def.localAnchorB = b2Vec2{localAnchorBx, localAnchorBy};
+        def.enableLimit = true;
+        def.lowerAngle = angleLimitL;
+        def.upperAngle = angleLimitU;
+        def.maxMotorTorque = maxTorch;
+        def.enableMotor = true;
+        def.hertz = 0;
+        def.dampingRatio = 100;
+        b2JointId* _ret = (b2JointId*)malloc(sizeof(b2JointId));
+        *_ret = b2CreateRevoluteJoint(*(b2WorldId*)worldId, &def);
+        return (jlong)_ret;
+        HANDLE_JAVA_EXCEPTION_END()
+        return 0;
+
+    */
+
+    public static b2BodyId b2CreateBlock(b2WorldId worldId, Affine2 transform, float size) {
+        return new b2BodyId(b2CreateBlock_internal(worldId.getPointer(), size, transform.m02, transform.m12, transform.m00, transform.m10), true);
+    }
+
+    static private native long b2CreateBlock_internal(long worldId, float size, float x, float y, float c, float s);/*
+    	HANDLE_JAVA_EXCEPTION_START()
+        b2BodyDef def = b2DefaultBodyDef();
+        def.position = {x, y};
+        def.rotation = {c, s};
+        b2ShapeDef shapeDef = b2DefaultShapeDef();
+        b2Polygon polygon = b2MakeSquare(size);
+        b2BodyId* _ret = (b2BodyId*)malloc(sizeof(b2BodyId));
+        *_ret = b2CreateBody(*(b2WorldId*)worldId, &def);
+        b2CreatePolygonShape(*_ret, &shapeDef, &polygon);
+        return (jlong)_ret;
+    	HANDLE_JAVA_EXCEPTION_END()
+    	return 0;
+    */
+
+
+    //region convert
     public static void b2Body_GetPosition(b2BodyId bodyId, b2Vec2 pos) {
         b2Body_GetPosition_internal(bodyId.getPointer(), pos.getPointer());
     }
@@ -190,7 +260,7 @@ bool overlapQuery_aux(b2ShapeId shapeId, void* context)
         b2.y(gdx.m12);
         return b2;
     }
-
+    //endregion
 
     public interface EntityCallback extends Closure {
 
@@ -213,22 +283,22 @@ bool overlapQuery_aux(b2ShapeId shapeId, void* context)
         private final HashMap<Long, T> map = new HashMap<>();
 
         public void put(b2BodyId bodyId, T userData) {
-            long key = b2Body_GetRawUserData(bodyId);
+            long key = b2BodyGetRawUserData(bodyId);
             if (key == 0) {
                 key = uid++;
-                b2Body_SetRawUserData(bodyId, key);
+                b2BodySetRawUserData(bodyId, key);
             }
             map.put(key, userData);
         }
 
         public T get(b2BodyId bodyId) {
-            long key = b2Body_GetRawUserData(bodyId);
+            long key = b2BodyGetRawUserData(bodyId);
             return map.get(key);
         }
 
         public T remove(b2BodyId bodyId) {
-            long key = b2Body_GetRawUserData(bodyId);
-            b2Body_SetRawUserData(bodyId, 0);
+            long key = b2BodyGetRawUserData(bodyId);
+            b2BodySetRawUserData(bodyId, 0);
             return map.remove(key);
         }
     }
