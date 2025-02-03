@@ -35,14 +35,12 @@ jobs:
           java-version: '17'
 
       - name: Build box2d
-#        run: ./gradlew build_linux
         run: ./gradlew build_linux build_android build_windows
 
       - name: Initialize jnigen
         run: ./gradlew jnigen
 
       - name: Build natives
-#        run: ./gradlew jnigenBuildAllLinux
         run: ./gradlew jnigenBuildAllLinux jnigenBuildAllWindows jnigenBuildAllAndroid
 
 
@@ -52,7 +50,7 @@ jobs:
           zip natives-linux -@ < native-files-list
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: natives-linux.zip
           path: natives-linux.zip
@@ -77,12 +75,17 @@ jobs:
 
       - name: Download Artifacts from linux
         if: success() && needs.build-linux.result == 'success'
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: natives-linux.zip
 
       - name: Unzip artifacts
         run: unzip -o natives-linux.zip
+      - name: Download Artifacts from mac
+        if: success() && needs.build-mac.result == 'success'
+        uses: actions/download-artifact@v4
+        with:
+          name: natives-mac.zip
 
 
       - name: Package All
