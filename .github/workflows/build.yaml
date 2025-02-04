@@ -3,7 +3,7 @@ name: Build Workflow
 on: [push, pull_request]
 
 jobs:
-  build-linux:
+  build:
     runs-on: ubuntu-20.04
     steps:
       - name: Install cross-compilation toolchains
@@ -41,23 +41,23 @@ jobs:
         run: ./gradlew jnigen
 
       - name: Build natives
-        run: ./gradlew jnigenBuildAllLinux jnigenBuildAllWindows jnigenBuildAllAndroid
+        run: ./gradlew jnigenBuildAllLinux jnigenBuildAllWindows jnigenBuildAndroid_x86_64 jnigenBuildAndroid_arm64-v8a
 
 
       - name: Pack artifacts
         run: |
           find .  -name "*.a" -o -name "*.dll" -o -name "*.dylib" -o -name "*.so" | grep "libs" > native-files-list
-          zip natives-linux -@ < native-files-list
+          zip natives -@ < native-files-list
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: natives-linux.zip
-          path: natives-linux.zip
+          name: natives.zip
+          path: natives.zip
 
   publish:
     runs-on: ubuntu-latest
-    needs: [ build-linux ]
+    needs: [ build ]
     permissions:
         contents: read
         packages: write
@@ -74,19 +74,12 @@ jobs:
           java-version: '17'
 
       - name: Download Artifacts from linux
-        if: success() && needs.build-linux.result == 'success'
         uses: actions/download-artifact@v4
         with:
-          name: natives-linux.zip
+          name: natives.zip
 
       - name: Unzip artifacts
-        run: unzip -o natives-linux.zip
-      - name: Download Artifacts from mac
-        if: success() && needs.build-mac.result == 'success'
-        uses: actions/download-artifact@v4
-        with:
-          name: natives-mac.zip
-
+        run: unzip -o natives.zip
 
       - name: Package All
         run: ./gradlew jnigenPackageAll

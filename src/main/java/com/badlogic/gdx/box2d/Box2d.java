@@ -8530,7 +8530,6 @@ static jclass cxxExceptionClass = NULL;
         /**
          * Prototype callback for overlap queries.
          * Called for each shape found in the query.
-         * @see b2World_OverlapAABB
          * @return false to terminate the query.
          * @ingroup world
          */

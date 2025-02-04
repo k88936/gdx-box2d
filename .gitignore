@@ -1,5 +1,5 @@
 .gradle
-publish.sh
+snapshot.sh
 build/
 /box2d/
 /cmake-build-debug/
