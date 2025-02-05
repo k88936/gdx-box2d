@@ -1,5 +1,6 @@
 package com.badlogic.gdx.box2d.structs;
 
+import com.badlogic.gdx.box2d.Id;
 import com.badlogic.gdx.jnigen.runtime.CHandler;
 import com.badlogic.gdx.jnigen.runtime.pointer.Struct;
 import com.badlogic.gdx.jnigen.runtime.pointer.StackElementPointer;
@@ -8,7 +9,7 @@ import com.badlogic.gdx.box2d.FFITypes;
 /**
  * Body id references a body instance. This should be treated as an opaque handle.
  */
-public final class b2BodyId extends Struct {
+public final class b2BodyId extends Struct implements Id {
 
     private final static int __size;
 

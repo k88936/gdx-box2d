@@ -8,8 +8,7 @@ import com.badlogic.gdx.jnigen.runtime.ffi.JavaTypeWrapper;
 import com.badlogic.gdx.math.Affine2;
 import com.badlogic.gdx.math.Matrix3;
 import com.badlogic.gdx.math.Vector2;
-
-import java.util.HashMap;
+import com.badlogic.gdx.utils.Array;
 
 
 public final class Box2dPlus {
@@ -32,16 +31,30 @@ bool overlapQuery_aux(b2ShapeId shapeId, void* context)
     return callback((long long)b2Body_GetUserData(b2Shape_GetBody(shapeId)));
 }
 */
-    public static void b2WorldOverlapAABB(b2WorldId worldId, float lx, float ly, float ux, float uy, ClosureObject<EntityCallback> fcn) {
+    public static void b2WorldOverlapAABBbyEntity(b2WorldId worldId, float lx, float ly, float ux, float uy, ClosureObject<EntityCallback> fcn) {
+        b2WorldOverlapAABBbyEntity_internal(worldId.getPointer(), lx, ly, ux, uy, fcn.getPointer());
+
+    }
+
+    public static void b2WorldOverlapAABB(b2WorldId worldId, float lx, float ly, float ux, float uy, ClosureObject<Box2d.b2OverlapResultFcn> fcn) {
         b2WorldOverlapAABB_internal(worldId.getPointer(), lx, ly, ux, uy, fcn.getPointer());
     }
+
+    private static native void b2WorldOverlapAABBbyEntity_internal(long worldId, float lx, float ly, float ux, float uy, long fcn);/*
+    	HANDLE_JAVA_EXCEPTION_START()
+    	b2AABB box;
+    	box.lowerBound={lx,ly};
+    	box.upperBound={ux,uy};
+        b2World_OverlapAABB(*(b2WorldId*)worldId, box, b2DefaultQueryFilter(), overlapQuery_aux, (void*)fcn);
+        HANDLE_JAVA_EXCEPTION_END()
+    */
 
     private static native void b2WorldOverlapAABB_internal(long worldId, float lx, float ly, float ux, float uy, long fcn);/*
     	HANDLE_JAVA_EXCEPTION_START()
     	b2AABB box;
     	box.lowerBound={lx,ly};
     	box.upperBound={ux,uy};
-        b2World_OverlapAABB(*(b2WorldId*)worldId, box, b2DefaultQueryFilter(), overlapQuery_aux, (void*)fcn);
+        b2World_OverlapAABB(*(b2WorldId*)worldId, box, b2DefaultQueryFilter(), (b2OverlapResultFcn* )fcn, NULL);
         HANDLE_JAVA_EXCEPTION_END()
     */
 
@@ -56,6 +69,50 @@ bool overlapQuery_aux(b2ShapeId shapeId, void* context)
         b2World_OverlapPolygon(*(b2WorldId*)worldId, &polygon, transform, b2DefaultQueryFilter(), overlapQuery_aux,
                                (void*)fcn);
         HANDLE_JAVA_EXCEPTION_END()
+    */
+
+    public static void b2WorldCastRayByOT(b2WorldId worldId, Vector2 origin, Vector2 translation, b2QueryFilter filter, ClosureObject<Box2d.b2CastResultFcn> fcn) {
+        b2WorldCastRay_internal(worldId.getPointer(), origin.x, origin.y, translation.x, translation.y, filter.getPointer(), fcn.getPointer());
+    }
+
+    public static void b2WorldCastRayByOE(b2WorldId worldId, Vector2 origin, Vector2 end, b2QueryFilter filter, ClosureObject<Box2d.b2CastResultFcn> fcn) {
+        b2WorldCastRay_internal(worldId.getPointer(), origin.x, origin.y, end.x - origin.x, end.y - origin.y, fcn.getPointer());
+    }
+
+    private static native void b2WorldCastRay_internal(long worldId, float originX, float originY, float translationX, float translationY, long filter, long fcn);/*
+    	HANDLE_JAVA_EXCEPTION_START()
+    	b2Vec2 origin={originX, originY};
+    	b2Vec2 translation={translationX, translationY};
+    	b2World_CastRay(*(b2WorldId*)worldId, origin, translation, *(b2QueryFilter*)filter, (b2CastResultFcn *)fcn, NULL);
+    	HANDLE_JAVA_EXCEPTION_END()
+    */
+
+    public static void b2WorldCastRayByOT(b2WorldId worldId, Vector2 origin, Vector2 translation, ClosureObject<Box2d.b2CastResultFcn> fcn) {
+        b2WorldCastRay_internal(worldId.getPointer(), origin.x, origin.y, translation.x, translation.y, fcn.getPointer());
+    }
+
+    public static void b2WorldCastRayByOE(b2WorldId worldId, Vector2 origin, Vector2 end, ClosureObject<Box2d.b2CastResultFcn> fcn) {
+        b2WorldCastRay_internal(worldId.getPointer(), origin.x, origin.y, end.x - origin.x, end.y - origin.y, fcn.getPointer());
+    }
+
+    private static native void b2WorldCastRay_internal(long worldId, float originX, float originY, float translationX, float translationY, long fcn);/*
+    	HANDLE_JAVA_EXCEPTION_START()
+    	b2Vec2 origin={originX, originY};
+    	b2Vec2 translation={translationX, translationY};
+    	b2World_CastRay(*(b2WorldId*)worldId, origin, translation, b2DefaultQueryFilter(), (b2CastResultFcn *)fcn, NULL);
+    	HANDLE_JAVA_EXCEPTION_END()
+    */
+
+    public static boolean b2ShapeTestPoint(b2ShapeId shapeId, Vector2 point) {
+        return b2ShapeTestPoint_internal(shapeId.getPointer(), point.x, point.y);
+    }
+
+    private static native boolean b2ShapeTestPoint_internal(long shapeId, float x, float y);/*
+    	HANDLE_JAVA_EXCEPTION_START()
+    	b2Vec2 point ={x,y};
+    	return (jboolean)b2Shape_TestPoint(*(b2ShapeId*)shapeId, point);
+    	HANDLE_JAVA_EXCEPTION_END()
+    	return 0;
     */
 
     public static void b2BodySetRawUserData(b2BodyId bodyId, long userData) {
@@ -277,29 +334,50 @@ bool overlapQuery_aux(b2ShapeId shapeId, void* context)
         }
     }
 
-    public static class UserDataMappper<T> {
+    public static class BodyUserDataMapper<T extends Id, U> {
 
-        private static long uid = 1;
-        private final HashMap<Long, T> map = new HashMap<>();
 
-        public void put(b2BodyId bodyId, T userData) {
-            long key = b2BodyGetRawUserData(bodyId);
-            if (key == 0) {
-                key = uid++;
-                b2BodySetRawUserData(bodyId, key);
+        private final Array<Array<U>> content = new Array<>();
+
+        public void put(T id, U userData) {
+            int i = id.index1();
+            int w = id.world0();
+            if (w > content.size) {
+                content.ensureCapacity(2 * w);
             }
-            map.put(key, userData);
+            Array<U> ts = content.get(w);
+            if (ts == null) {
+                ts = new Array<>();
+                content.set(w, ts);
+            }
+
+            ts.set(i, userData);
         }
 
-        public T get(b2BodyId bodyId) {
-            long key = b2BodyGetRawUserData(bodyId);
-            return map.get(key);
+        public U get(T id) {
+            int i = id.index1();
+            int w = id.world0();
+//            if (w > content.size) {
+//                return null;
+//            }
+            Array<U> ts = content.get(w);
+//            if (ts == null) {
+//                return null;
+//            }
+            return ts.get(i);
         }
 
-        public T remove(b2BodyId bodyId) {
-            long key = b2BodyGetRawUserData(bodyId);
-            b2BodySetRawUserData(bodyId, 0);
-            return map.remove(key);
+        public U remove(T id) {
+            int i = id.index1();
+            int w = id.world0();
+//            if (w > content.size) {
+//                return null;
+//            }
+            Array<U> ts = content.get(w);
+//            if (ts == null) {
+//                return null;
+//            }
+            return ts.removeIndex(i);
         }
     }
 
