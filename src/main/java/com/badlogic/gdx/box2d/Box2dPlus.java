@@ -19,6 +19,7 @@ static jclass illegalArgumentExceptionClass = NULL;
 static jclass cxxExceptionClass = NULL;
 */
 
+    //region query
 
     /*JNI
 typedef bool entityCallback(long entityId);
@@ -83,13 +84,13 @@ bool overlapQuery_aux(b2ShapeId shapeId, void* context)
         HANDLE_JAVA_EXCEPTION_END()
     */
 
-    public static void b2WorldOverlapPolygon(b2WorldId worldId, b2Hull hull, float size, Affine2 transform, EntityCallback fcn) {
-        b2WorldOverlapPolygon_internal(worldId.getPointer(), hull.getPointer(), size, transform.m00, transform.m10, transform.m02, transform.m12, ClosureObject.fromClosure(fcn).getPointer());
+    public static void b2WorldOverlapPolygon(b2WorldId worldId, b2Hull hull, Affine2 transform, EntityCallback fcn) {
+        b2WorldOverlapPolygon_internal(worldId.getPointer(), hull.getPointer(), transform.m00, transform.m10, transform.m02, transform.m12, ClosureObject.fromClosure(fcn).getPointer());
     }
 
-    static private native void b2WorldOverlapPolygon_internal(long worldId, long hull, float size, float transform_c, float transform_s, float transform_x, float transform_y, long fcn);/*
+    static private native void b2WorldOverlapPolygon_internal(long worldId, long hull,  float transform_c, float transform_s, float transform_x, float transform_y, long fcn);/*
         HANDLE_JAVA_EXCEPTION_START()
-        b2Polygon polygon = b2MakePolygon((b2Hull*)hull, size);
+        b2Polygon polygon = b2MakePolygon((b2Hull*)hull, 0);
         b2Transform transform = {b2Vec2{transform_x, transform_y}, b2Rot{transform_c, transform_s}};
         b2World_OverlapPolygon(*(b2WorldId*)worldId, &polygon, transform, b2DefaultQueryFilter(), overlapQuery_aux,
                                (void*)fcn);
@@ -141,13 +142,10 @@ bool overlapQuery_aux(b2ShapeId shapeId, void* context)
     	return 0;
     */
 
-    public static void b2BodySetRawUserData(b2BodyId bodyId, long userData) {
-        Box2d.b2Body_SetUserData_internal(bodyId.getPointer(), userData);
-    }
+    //endregion
 
-    public static long b2BodyGetRawUserData(b2BodyId bodyId) {
-        return Box2d.b2Body_GetUserData_internal(bodyId.getPointer());
-    }
+
+    //region joint
 
     public static b2JointId b2ConnectBlockByWeldJoint(b2WorldId worldId, b2BodyId bodyIdA, b2BodyId bodyIdB, Vector2 localAnchorA, Vector2 localAnchorB, float referenceAngle) {
         return new b2JointId(b2ConnectBlockByWeldJoint_internal(worldId.getPointer(), bodyIdA.getPointer(), bodyIdB.getPointer(), localAnchorA.x, localAnchorA.y, localAnchorB.x, localAnchorB.y, referenceAngle), true);
@@ -199,6 +197,10 @@ bool overlapQuery_aux(b2ShapeId shapeId, void* context)
 
     */
 
+    //endregion
+
+    //region create
+
     public static b2BodyId b2CreateCircle(b2WorldId worldId, Affine2 transform, float size) {
         return new b2BodyId(b2CreateBlock_internal(worldId.getPointer(), size, transform.m02, transform.m12, transform.m00, transform.m10), true);
     }
@@ -243,18 +245,18 @@ bool overlapQuery_aux(b2ShapeId shapeId, void* context)
         return 0;
     */
 
-    public static b2BodyId b2CreatePolygon(b2WorldId worldId, Affine2 transform, b2Hull hull, float size) {
-        return new b2BodyId(b2CreatePolygon_internal(worldId.getPointer(), transform.m02, transform.m12, transform.m00, transform.m10, hull.getPointer(), size), true);
+    public static b2BodyId b2CreatePolygon(b2WorldId worldId, Affine2 transform, b2Hull hull) {
+        return new b2BodyId(b2CreatePolygon_internal(worldId.getPointer(), transform.m02, transform.m12, transform.m00, transform.m10, hull.getPointer()), true);
     }
 
-    static private native long b2CreatePolygon_internal(long worldId, float x, float y, float c, float s, long hull, float size);/*
+    static private native long b2CreatePolygon_internal(long worldId, float x, float y, float c, float s, long hull);/*
         HANDLE_JAVA_EXCEPTION_START()
         b2BodyDef def = b2DefaultBodyDef();
         def.position = {x, y};
         def.rotation = {c, s};
         def.type = b2_dynamicBody;
         b2ShapeDef shapeDef = b2DefaultShapeDef();
-        b2Polygon polygon = b2MakePolygon((b2Hull *)hull, size);
+        b2Polygon polygon = b2MakePolygon((b2Hull *)hull, 0);
         b2BodyId* _ret = (b2BodyId*)malloc(sizeof(b2BodyId));
         *_ret = b2CreateBody(*(b2WorldId*)worldId, &def);
         b2CreatePolygonShape(*_ret, &shapeDef, &polygon);
@@ -283,6 +285,7 @@ bool overlapQuery_aux(b2ShapeId shapeId, void* context)
     	return 0;
     */
 
+    //endregion
 
     //region convert
     public static void b2Body_GetPosition(b2BodyId bodyId, b2Vec2 pos) {
@@ -439,7 +442,15 @@ bool overlapQuery_aux(b2ShapeId shapeId, void* context)
             returnType.setValue(b2OverlapResultFcn_call(parameters[0].asLong()));
         }
     }
+    //region userdata
 
+    public static void b2BodySetRawUserData(b2BodyId bodyId, long userData) {
+        Box2d.b2Body_SetUserData_internal(bodyId.getPointer(), userData);
+    }
+
+    public static long b2BodyGetRawUserData(b2BodyId bodyId) {
+        return Box2d.b2Body_GetUserData_internal(bodyId.getPointer());
+    }
     public static class BodyUserDataMapper<T extends Id, U> {
 
 
@@ -487,4 +498,5 @@ bool overlapQuery_aux(b2ShapeId shapeId, void* context)
         }
     }
 
+    //endregion
 }
