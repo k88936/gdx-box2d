@@ -28,11 +28,11 @@ jobs:
           fetch-depth: 0
           submodules: 'recursive'
 
-      - name: Set up JDK 17
+      - name: Set up JDK 21
         uses: actions/setup-java@v3
         with:
           distribution: 'zulu'
-          java-version: '17'
+          java-version: '21'
 
       - name: Build box2d
         run: ./gradlew build_linux build_android build_windows
