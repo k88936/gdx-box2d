@@ -88,7 +88,7 @@ bool overlapQuery_aux(b2ShapeId shapeId, void* context)
         b2WorldOverlapPolygon_internal(worldId.getPointer(), hull.getPointer(), transform.m00, transform.m10, transform.m02, transform.m12, ClosureObject.fromClosure(fcn).getPointer());
     }
 
-    static private native void b2WorldOverlapPolygon_internal(long worldId, long hull,  float transform_c, float transform_s, float transform_x, float transform_y, long fcn);/*
+    static private native void b2WorldOverlapPolygon_internal(long worldId, long hull, float transform_c, float transform_s, float transform_x, float transform_y, long fcn);/*
         HANDLE_JAVA_EXCEPTION_START()
         b2Polygon polygon = b2MakePolygon((b2Hull*)hull, 0);
         b2Transform transform = {b2Vec2{transform_x, transform_y}, b2Rot{transform_c, transform_s}};
@@ -171,21 +171,28 @@ bool overlapQuery_aux(b2ShapeId shapeId, void* context)
     	return 0;
     */
 
-    public static b2JointId b2ConnectBlockByRevoluteJoint(b2WorldId worldId, b2BodyId bodyIdA, b2BodyId bodyIdB, Vector2 localAnchorA, Vector2 localAnchorB, float angleLimitL, float angleLimitU, float maxTorch) {
-        return new b2JointId(b2ConnectBlockByRevoluteJoint_internal(worldId.getPointer(), bodyIdA.getPointer(), bodyIdB.getPointer(), localAnchorA.x, localAnchorA.y, localAnchorB.x, localAnchorB.y, angleLimitL, angleLimitU, maxTorch), true);
+    public static b2JointId b2ConnectBlockByRevoluteJoint(b2WorldId worldId, b2BodyId bodyIdA, b2BodyId bodyIdB, Vector2 localAnchorA, Vector2 localAnchorB) {
+        return new b2JointId(b2ConnectBlockByRevoluteJoint_internal(worldId.getPointer(), bodyIdA.getPointer(), bodyIdB.getPointer(), localAnchorA.x, localAnchorA.y, localAnchorB.x, localAnchorB.y), true);
     }
+//
+//    public static b2JointId b2ConnectBlockByRevoluteJoint(b2WorldId worldId, b2BodyId bodyIdA, b2BodyId bodyIdB, Vector2 localAnchorA, Vector2 localAnchorB, float angleLimitL, float angleLimitU, float maxTorch) {
+//        b2JointId b2JointId = new b2JointId(b2ConnectBlockByRevoluteJoint_internal(worldId.getPointer(), bodyIdA.getPointer(), bodyIdB.getPointer(), localAnchorA.x, localAnchorA.y, localAnchorB.x, localAnchorB.y), true);
+//        Box2d.b2RevoluteJoint_SetLimits(b2JointId, angleLimitL, angleLimitU);
+//        Box2d.b2RevoluteJoint_SetMaxMotorTorque(b2JointId, maxTorch);
+//        return b2JointId;
+//    }
 
-    static private native long b2ConnectBlockByRevoluteJoint_internal(long worldId, long bodyIdA, long bodyIdB, float localAnchorAx, float localAnchorAy, float localAnchorBx, float localAnchorBy, float angleLimitL, float angleLimitU, float maxTorch);/*
+    static private native long b2ConnectBlockByRevoluteJoint_internal(long worldId, long bodyIdA, long bodyIdB, float localAnchorAx, float localAnchorAy, float localAnchorBx, float localAnchorBy);/*
         HANDLE_JAVA_EXCEPTION_START()
         b2RevoluteJointDef def = b2DefaultRevoluteJointDef();
         def.bodyIdA = *(b2BodyId*)bodyIdA;
         def.bodyIdB = *(b2BodyId*)bodyIdB;
         def.localAnchorA = b2Vec2{localAnchorAx, localAnchorAy};
         def.localAnchorB = b2Vec2{localAnchorBx, localAnchorBy};
-        def.enableLimit = true;
-        def.lowerAngle = angleLimitL;
-        def.upperAngle = angleLimitU;
-        def.maxMotorTorque = maxTorch;
+//        def.enableLimit = true;
+//        def.lowerAngle = angleLimitL;
+//        def.upperAngle = angleLimitU;
+//        def.maxMotorTorque = maxTorch;
         def.enableMotor = true;
         def.hertz = 0;
         def.dampingRatio = 100;
@@ -202,7 +209,7 @@ bool overlapQuery_aux(b2ShapeId shapeId, void* context)
     //region create
 
     public static b2BodyId b2CreateCircle(b2WorldId worldId, Affine2 transform, float size) {
-        return new b2BodyId(b2CreateBlock_internal(worldId.getPointer(), size, transform.m02, transform.m12, transform.m00, transform.m10), true);
+        return new b2BodyId(b2CreateCircle_internal(worldId.getPointer(), size, transform.m02, transform.m12, transform.m00, transform.m10), true);
     }
 
     public static b2Hull b2ComputeHull(float[] points) {
@@ -428,6 +435,15 @@ bool overlapQuery_aux(b2ShapeId shapeId, void* context)
     }
     //endregion
 
+    public static void b2BodySetRawUserData(b2BodyId bodyId, long userData) {
+        Box2d.b2Body_SetUserData_internal(bodyId.getPointer(), userData);
+    }
+    //region userdata
+
+    public static long b2BodyGetRawUserData(b2BodyId bodyId) {
+        return Box2d.b2Body_GetUserData_internal(bodyId.getPointer());
+    }
+
     public interface EntityCallback extends Closure {
 
         CTypeInfo[] __ffi_cache = new CTypeInfo[]{FFITypes.getCTypeInfo(0), FFITypes.getCTypeInfo(4)};
@@ -442,15 +458,7 @@ bool overlapQuery_aux(b2ShapeId shapeId, void* context)
             returnType.setValue(b2OverlapResultFcn_call(parameters[0].asLong()));
         }
     }
-    //region userdata
 
-    public static void b2BodySetRawUserData(b2BodyId bodyId, long userData) {
-        Box2d.b2Body_SetUserData_internal(bodyId.getPointer(), userData);
-    }
-
-    public static long b2BodyGetRawUserData(b2BodyId bodyId) {
-        return Box2d.b2Body_GetUserData_internal(bodyId.getPointer());
-    }
     public static class BodyUserDataMapper<T extends Id, U> {
 
 
