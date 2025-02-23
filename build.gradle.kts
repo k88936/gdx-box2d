@@ -129,7 +129,7 @@ tasks.create("build_android") {
             cmakeBuild(
                 file("build/box2d/android/${abi}"),
                 "android_${abi}",
-                file("${System.getenv("NDK_HOME")}/build/cmake/android.toolchain.cmake"),
+                file("${System.getenv("ANDROID_NDK")}/build/cmake/android.toolchain.cmake"),
                 arrayOf("-DANDROID_ABI=${abi}", "-DANDROID_PLATFORM=android-21", "-DANDROID_STL=c++_shared")
             )
         )
@@ -138,20 +138,6 @@ tasks.create("build_android") {
 
 tasks.create("build_linux") {
     group = "box2d"
-//    dependsOn(
-//        cmakeBuild(
-//            file("build/box2d/linux_arm64"),
-//            "linux_arm64",
-//            file("box2d_build/toolchain_linux_arm64.cmake")
-//        )
-//    )
-//    dependsOn(
-//        cmakeBuild(
-//            file("build/box2d/linux_riscv64"),
-//            "linux_riscv64",
-//            file("box2d_build/toolchain_linux_riscv64.cmake")
-//        )
-//    )
     dependsOn(
         cmakeBuild(
             file("build/box2d/linux_x86_64"),
@@ -191,14 +177,8 @@ jnigen {
         val combined = name + "_" + arch
 
         headerDirs += arrayOf("build/box2d/${combined}/include/")
-//        cFlags += " -std=c11 -fexceptions -DB2_ENABLE_ASSERT "
-        cFlags += " -std=c11 -fexceptions -DB2_ENABLE_ASSERT " +
-//                "-fpermissive " +
-                "-m64"
-//        cppFlags += " -std=c++11 -fexceptions -DB2_ENABLE_ASSERT"
-        cppFlags += " -std=c++11 -fexceptions -DB2_ENABLE_ASSERT " +
-//                "-fpermissive " +
-                "-m64"
+        cFlags += arrayOf("-std=c11", "-fexceptions", "-DB2_ENABLE_ASSERT","-m64")
+        cppFlags += arrayOf("-std=c++11", "-fexceptions", "-DB2_ENABLE_ASSERT","-m64")
         libraries += file("build/box2d/${combined}/libs/libbox2d.a").absolutePath
     }
 
