@@ -32,67 +32,72 @@ bool overlapQuery_aux(b2ShapeId shapeId, void* context)
     return callback((long long)b2Body_GetUserData(b2Shape_GetBody(shapeId)));
 }
 */
-    public static void b2WorldOverlapAABBbyEntity(b2WorldId worldId, float lx, float ly, float ux, float uy, EntityCallback callback) {
-        b2WorldOverlapAABBbyEntity_internal(worldId.getPointer(), lx, ly, ux, uy, ClosureObject.fromClosure(callback).getPointer());
+    public static void b2WorldOverlapAABBbyEntity(b2WorldId worldId, float lx, float ly, float ux, float uy, ContactFilter filter, EntityCallback callback) {
+        b2WorldOverlapAABBbyEntity_internal(worldId.getPointer(), lx, ly, ux, uy, filter.categoryBits, filter.maskBits, ClosureObject.fromClosure(callback).getPointer());
 
     }
 
-    public static void b2WorldOverlapAABB(b2WorldId worldId, float lx, float ly, float ux, float uy, Box2d.b2OverlapResultFcn fcn) {
-        b2WorldOverlapAABB_internal(worldId.getPointer(), lx, ly, ux, uy, ClosureObject.fromClosure(fcn).getPointer());
+    public static void b2WorldOverlapAABB(b2WorldId worldId, float lx, float ly, float ux, float uy,ContactFilter filter, Box2d.b2OverlapResultFcn fcn) {
+        b2WorldOverlapAABB_internal(worldId.getPointer(), lx, ly, ux, uy,filter.categoryBits, filter.maskBits, ClosureObject.fromClosure(fcn).getPointer());
     }
 
-    private static native void b2WorldOverlapAABBbyEntity_internal(long worldId, float lx, float ly, float ux, float uy, long fcn);/*
+    private static native void b2WorldOverlapAABBbyEntity_internal(long worldId, float lx, float ly, float ux, float uy,int categoryBits, int maskBits, long fcn);/*
     	HANDLE_JAVA_EXCEPTION_START()
     	b2AABB box;
     	box.lowerBound={lx,ly};
     	box.upperBound={ux,uy};
-        b2World_OverlapAABB(*(b2WorldId*)worldId, box, b2DefaultQueryFilter(), overlapQuery_aux, (void*)fcn);
+        b2QueryFilter filter{static_cast<uint64_t>(categoryBits), static_cast<uint64_t>(maskBits)};
+        b2World_OverlapAABB(*(b2WorldId*)worldId, box, filter, overlapQuery_aux, (void*)fcn);
         HANDLE_JAVA_EXCEPTION_END()
     */
 
-    private static native void b2WorldOverlapAABB_internal(long worldId, float lx, float ly, float ux, float uy, long fcn);/*
+    private static native void b2WorldOverlapAABB_internal(long worldId, float lx, float ly, float ux, float uy, int categoryBits, int maskBits, long fcn);/*
     	HANDLE_JAVA_EXCEPTION_START()
     	b2AABB box;
     	box.lowerBound={lx,ly};
     	box.upperBound={ux,uy};
-        b2World_OverlapAABB(*(b2WorldId*)worldId, box, b2DefaultQueryFilter(), (b2OverlapResultFcn* )fcn, NULL);
+    	b2QueryFilter filter{static_cast<uint64_t>(categoryBits), static_cast<uint64_t>(maskBits)};
+        b2World_OverlapAABB(*(b2WorldId*)worldId, box, filter, (b2OverlapResultFcn* )fcn, NULL);
         HANDLE_JAVA_EXCEPTION_END()
     */
 
-    public static void b2WorldOverlapSquare(b2WorldId worldId, float size, Affine2 transform, EntityCallback fcn) {
-        b2WorldOverlapSquare_internal(worldId.getPointer(), size, transform.m00, transform.m10, transform.m02, transform.m12, ClosureObject.fromClosure(fcn).getPointer());
+    public static void b2WorldOverlapSquare(b2WorldId worldId, float size, Affine2 transform,ContactFilter filter, EntityCallback fcn) {
+        b2WorldOverlapSquare_internal(worldId.getPointer(), size, transform.m00, transform.m10, transform.m02, transform.m12,filter.categoryBits, filter.maskBits, ClosureObject.fromClosure(fcn).getPointer());
     }
 
-    static private native void b2WorldOverlapSquare_internal(long worldId, float size, float transform_c, float transform_s, float transform_x, float transform_y, long fcn);/*
+    static private native void b2WorldOverlapSquare_internal(long worldId, float size, float transform_c, float transform_s, float transform_x, float transform_y,int categoryBits, int maskBits, long fcn);/*
         HANDLE_JAVA_EXCEPTION_START()
         b2Polygon polygon = b2MakeSquare(size);
         b2Transform transform = {b2Vec2{transform_x, transform_y}, b2Rot{transform_c, transform_s}};
-        b2World_OverlapPolygon(*(b2WorldId*)worldId, &polygon, transform, b2DefaultQueryFilter(), overlapQuery_aux,
+        b2QueryFilter filter{static_cast<uint64_t>(categoryBits), static_cast<uint64_t>(maskBits)};
+        b2World_OverlapPolygon(*(b2WorldId*)worldId, &polygon, transform, filter, overlapQuery_aux,
                                (void*)fcn);
         HANDLE_JAVA_EXCEPTION_END()
     */
 
-    public static void b2WorldOverlapCircle(b2WorldId worldId, float size, Affine2 transform, EntityCallback fcn) {
-        b2WorldOverlapCircle_internal(worldId.getPointer(), size, transform.m02, transform.m12, ClosureObject.fromClosure(fcn).getPointer());
+    public static void b2WorldOverlapCircle(b2WorldId worldId, float size, Affine2 transform,ContactFilter filter, EntityCallback fcn) {
+        b2WorldOverlapCircle_internal(worldId.getPointer(), size, transform.m02, transform.m12,filter.categoryBits, filter.maskBits, ClosureObject.fromClosure(fcn).getPointer());
     }
 
-    static private native void b2WorldOverlapCircle_internal(long worldId, float size, float x, float y, long fcn);/*
+    static private native void b2WorldOverlapCircle_internal(long worldId, float size, float x, float y,int categoryBits, int maskBits, long fcn);/*
         HANDLE_JAVA_EXCEPTION_START()
         b2Circle circle = {b2Vec2{x,y}, size};
-        b2World_OverlapCircle(*(b2WorldId*)worldId, &circle, b2Transform_identity, b2DefaultQueryFilter(), overlapQuery_aux,
+        b2QueryFilter filter{static_cast<uint64_t>(categoryBits), static_cast<uint64_t>(maskBits)};
+        b2World_OverlapCircle(*(b2WorldId*)worldId, &circle, b2Transform_identity, filter, overlapQuery_aux,
                                (void*)fcn);
         HANDLE_JAVA_EXCEPTION_END()
     */
 
-    public static void b2WorldOverlapPolygon(b2WorldId worldId, b2Hull hull, Affine2 transform, EntityCallback fcn) {
-        b2WorldOverlapPolygon_internal(worldId.getPointer(), hull.getPointer(), transform.m00, transform.m10, transform.m02, transform.m12, ClosureObject.fromClosure(fcn).getPointer());
+    public static void b2WorldOverlapPolygon(b2WorldId worldId, b2Hull hull, Affine2 transform,ContactFilter filter, EntityCallback fcn) {
+        b2WorldOverlapPolygon_internal(worldId.getPointer(), hull.getPointer(), transform.m00, transform.m10, transform.m02, transform.m12, filter.categoryBits, filter.maskBits, ClosureObject.fromClosure(fcn).getPointer());
     }
 
-    static private native void b2WorldOverlapPolygon_internal(long worldId, long hull, float transform_c, float transform_s, float transform_x, float transform_y, long fcn);/*
+    static private native void b2WorldOverlapPolygon_internal(long worldId, long hull, float transform_c, float transform_s, float transform_x, float transform_y, int categoryBits, int maskBits, long fcn);/*
         HANDLE_JAVA_EXCEPTION_START()
         b2Polygon polygon = b2MakePolygon((b2Hull*)hull, 0);
         b2Transform transform = {b2Vec2{transform_x, transform_y}, b2Rot{transform_c, transform_s}};
-        b2World_OverlapPolygon(*(b2WorldId*)worldId, &polygon, transform, b2DefaultQueryFilter(), overlapQuery_aux,
+        b2QueryFilter filter{static_cast<uint64_t>(categoryBits), static_cast<uint64_t>(maskBits)};
+        b2World_OverlapPolygon(*(b2WorldId*)worldId, &polygon, transform, filter, overlapQuery_aux,
                                (void*)fcn);
         HANDLE_JAVA_EXCEPTION_END()
 
@@ -208,8 +213,8 @@ bool overlapQuery_aux(b2ShapeId shapeId, void* context)
 
     //region create
 
-    public static b2BodyId b2CreateCircle(b2WorldId worldId, Affine2 transform, float size) {
-        return new b2BodyId(b2CreateCircle_internal(worldId.getPointer(), size, transform.m02, transform.m12, transform.m00, transform.m10), true);
+    public static b2BodyId b2CreateCircle(b2WorldId worldId, Affine2 transform, float size, ContactFilter contactFilter) {
+        return new b2BodyId(b2CreateCircle_internal(worldId.getPointer(), size, transform.m02, transform.m12, transform.m00, transform.m10, contactFilter.categoryBits, contactFilter.maskBits, contactFilter.groupIndex), true);
     }
 
     public static b2Hull b2ComputeHull(float[] points) {
@@ -235,7 +240,7 @@ bool overlapQuery_aux(b2ShapeId shapeId, void* context)
 
     */
 
-    static private native long b2CreateCircle_internal(long worldId, float size, float x, float y, float c, float s);/*
+    static private native long b2CreateCircle_internal(long worldId, float size, float x, float y, float c, float s, int categoryBits, int maskBits, int groupIndex);/*
 
         HANDLE_JAVA_EXCEPTION_START()
         b2BodyDef def = b2DefaultBodyDef();
@@ -243,6 +248,9 @@ bool overlapQuery_aux(b2ShapeId shapeId, void* context)
         def.rotation = {c, s};
         def.type = b2_dynamicBody;
         b2ShapeDef shapeDef = b2DefaultShapeDef();
+        shapeDef.filter.categoryBits = categoryBits;
+        shapeDef.filter.maskBits = maskBits;
+        shapeDef.filter.groupIndex = groupIndex;
         b2Circle circle = {{0, 0}, size};
         b2BodyId* _ret = (b2BodyId*)malloc(sizeof(b2BodyId));
         *_ret = b2CreateBody(*(b2WorldId*)worldId, &def);
@@ -252,17 +260,24 @@ bool overlapQuery_aux(b2ShapeId shapeId, void* context)
         return 0;
     */
 
-    public static b2BodyId b2CreatePolygon(b2WorldId worldId, Affine2 transform, b2Hull hull) {
-        return new b2BodyId(b2CreatePolygon_internal(worldId.getPointer(), transform.m02, transform.m12, transform.m00, transform.m10, hull.getPointer()), true);
+    public static b2BodyId b2CreatePolygon(b2WorldId worldId, Affine2 transform, b2Hull hull, ContactFilter contactFilter) {
+        return new b2BodyId(b2CreatePolygon_internal(worldId.getPointer(), transform.m02, transform.m12, transform.m00, transform.m10, hull.getPointer(), contactFilter.categoryBits, contactFilter.maskBits, contactFilter.groupIndex), true);
     }
 
-    static private native long b2CreatePolygon_internal(long worldId, float x, float y, float c, float s, long hull);/*
+    public static record ContactFilter(int groupIndex, int categoryBits, int maskBits) {
+    }
+
+
+    static private native long b2CreatePolygon_internal(long worldId, float x, float y, float c, float s, long hull, int categoryBits, int maskBits, int groupIndex);/*
         HANDLE_JAVA_EXCEPTION_START()
         b2BodyDef def = b2DefaultBodyDef();
         def.position = {x, y};
         def.rotation = {c, s};
         def.type = b2_dynamicBody;
         b2ShapeDef shapeDef = b2DefaultShapeDef();
+        shapeDef.filter.categoryBits = categoryBits;
+        shapeDef.filter.maskBits = maskBits;
+        shapeDef.filter.groupIndex = groupIndex;
         b2Polygon polygon = b2MakePolygon((b2Hull *)hull, 0);
         b2BodyId* _ret = (b2BodyId*)malloc(sizeof(b2BodyId));
         *_ret = b2CreateBody(*(b2WorldId*)worldId, &def);
@@ -272,17 +287,20 @@ bool overlapQuery_aux(b2ShapeId shapeId, void* context)
     	return 0;
     */
 
-    public static b2BodyId b2CreateBlock(b2WorldId worldId, Affine2 transform, float size) {
-        return new b2BodyId(b2CreateBlock_internal(worldId.getPointer(), size, transform.m02, transform.m12, transform.m00, transform.m10), true);
+    public static b2BodyId b2CreateBlock(b2WorldId worldId, Affine2 transform, float size, ContactFilter contactFilter) {
+        return new b2BodyId(b2CreateBlock_internal(worldId.getPointer(), size, transform.m02, transform.m12, transform.m00, transform.m10, contactFilter.categoryBits, contactFilter.maskBits, contactFilter.groupIndex), true);
     }
 
-    static private native long b2CreateBlock_internal(long worldId, float size, float x, float y, float c, float s);/*
+    static private native long b2CreateBlock_internal(long worldId, float size, float x, float y, float c, float s, int categoryBits, int maskBits, int groupIndex);/*
     	HANDLE_JAVA_EXCEPTION_START()
         b2BodyDef def = b2DefaultBodyDef();
         def.position = {x, y};
         def.rotation = {c, s};
    		def.type=b2_dynamicBody;
         b2ShapeDef shapeDef = b2DefaultShapeDef();
+        shapeDef.filter.categoryBits = categoryBits;
+        shapeDef.filter.maskBits = maskBits;
+        shapeDef.filter.groupIndex = groupIndex;
         b2Polygon polygon = b2MakeSquare(size);
         b2BodyId* _ret = (b2BodyId*)malloc(sizeof(b2BodyId));
         *_ret = b2CreateBody(*(b2WorldId*)worldId, &def);
