@@ -32,6 +32,70 @@ bool overlapQuery_aux(b2ShapeId shapeId, void* context)
     return callback((long long)b2Body_GetUserData(b2Shape_GetBody(shapeId)));
 }
 */
+    public static void b2WorldOverlapAABBbyEntity(b2WorldId worldId, float lx, float ly, float ux, float uy, EntityCallback callback) {
+        b2WorldOverlapAABBbyEntity_internal(worldId.getPointer(), lx, ly, ux, uy, ClosureObject.fromClosure(callback).getPointer());
+
+    }
+
+    public static void b2WorldOverlapAABB(b2WorldId worldId, float lx, float ly, float ux, float uy, Box2d.b2OverlapResultFcn fcn) {
+        b2WorldOverlapAABB_internal(worldId.getPointer(), lx, ly, ux, uy, ClosureObject.fromClosure(fcn).getPointer());
+    }
+
+    private static native void b2WorldOverlapAABBbyEntity_internal(long worldId, float lx, float ly, float ux, float uy, long fcn);/*
+    	HANDLE_JAVA_EXCEPTION_START()
+    	b2AABB box;
+    	box.lowerBound={lx,ly};
+    	box.upperBound={ux,uy};
+        b2World_OverlapAABB(*(b2WorldId*)worldId, box, b2DefaultQueryFilter(), overlapQuery_aux, (void*)fcn);
+        HANDLE_JAVA_EXCEPTION_END()
+    */
+
+    private static native void b2WorldOverlapAABB_internal(long worldId, float lx, float ly, float ux, float uy, long fcn);/*
+    	HANDLE_JAVA_EXCEPTION_START()
+    	b2AABB box;
+    	box.lowerBound={lx,ly};
+    	box.upperBound={ux,uy};
+        b2World_OverlapAABB(*(b2WorldId*)worldId, box, b2DefaultQueryFilter(), (b2OverlapResultFcn* )fcn, NULL);
+        HANDLE_JAVA_EXCEPTION_END()
+    */
+
+    public static void b2WorldOverlapSquare(b2WorldId worldId, float size, Affine2 transform, EntityCallback fcn) {
+        b2WorldOverlapSquare_internal(worldId.getPointer(), size, transform.m00, transform.m10, transform.m02, transform.m12, ClosureObject.fromClosure(fcn).getPointer());
+    }
+
+    static private native void b2WorldOverlapSquare_internal(long worldId, float size, float transform_c, float transform_s, float transform_x, float transform_y, long fcn);/*
+        HANDLE_JAVA_EXCEPTION_START()
+        b2Polygon polygon = b2MakeSquare(size);
+        b2Transform transform = {b2Vec2{transform_x, transform_y}, b2Rot{transform_c, transform_s}};
+        b2World_OverlapPolygon(*(b2WorldId*)worldId, &polygon, transform, b2DefaultQueryFilter(), overlapQuery_aux,
+                               (void*)fcn);
+        HANDLE_JAVA_EXCEPTION_END()
+    */
+
+    public static void b2WorldOverlapCircle(b2WorldId worldId, float size, Affine2 transform, EntityCallback fcn) {
+        b2WorldOverlapCircle_internal(worldId.getPointer(), size, transform.m02, transform.m12, ClosureObject.fromClosure(fcn).getPointer());
+    }
+
+    static private native void b2WorldOverlapCircle_internal(long worldId, float size, float x, float y, long fcn);/*
+        HANDLE_JAVA_EXCEPTION_START()
+        b2Circle circle = {b2Vec2{x,y}, size};
+        b2World_OverlapCircle(*(b2WorldId*)worldId, &circle, b2Transform_identity, b2DefaultQueryFilter(), overlapQuery_aux,
+                               (void*)fcn);
+        HANDLE_JAVA_EXCEPTION_END()
+    */
+
+    public static void b2WorldOverlapPolygon(b2WorldId worldId, b2Hull hull, Affine2 transform, EntityCallback fcn) {
+        b2WorldOverlapPolygon_internal(worldId.getPointer(), hull.getPointer(), transform.m00, transform.m10, transform.m02, transform.m12, ClosureObject.fromClosure(fcn).getPointer());
+    }
+
+    static private native void b2WorldOverlapPolygon_internal(long worldId, long hull, float transform_c, float transform_s, float transform_x, float transform_y, long fcn);/*
+        HANDLE_JAVA_EXCEPTION_START()
+        b2Polygon polygon = b2MakePolygon((b2Hull*)hull, 0);
+        b2Transform transform = {b2Vec2{transform_x, transform_y}, b2Rot{transform_c, transform_s}};
+        b2World_OverlapPolygon(*(b2WorldId*)worldId, &polygon, transform, b2DefaultQueryFilter(), overlapQuery_aux,
+                               (void*)fcn);
+        HANDLE_JAVA_EXCEPTION_END()
+    */
     public static void b2WorldOverlapAABBbyEntity(b2WorldId worldId, float lx, float ly, float ux, float uy, ContactFilter filter, EntityCallback callback) {
         b2WorldOverlapAABBbyEntity_internal(worldId.getPointer(), lx, ly, ux, uy, filter.categoryBits, filter.maskBits, ClosureObject.fromClosure(callback).getPointer());
 
