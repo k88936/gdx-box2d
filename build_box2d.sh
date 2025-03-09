@@ -1,0 +1,1 @@
+./gradlew --daemon build_linux build_windows build_android

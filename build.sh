@@ -1,1 +1,0 @@
-./gradlew --daemon build_linux build_windows build_android jnigen jnigenBuildAllLinux jnigenBuildAllWindows jnigenBuildAndroid_arm64-v8a jnigenBuildAndroid_x86_64 jnigenPackageAll publish

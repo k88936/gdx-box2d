@@ -177,8 +177,8 @@ jnigen {
         val combined = name + "_" + arch
 
         headerDirs += arrayOf("build/box2d/${combined}/include/")
-        cFlags += arrayOf("-std=c11", "-fexceptions", "-DB2_ENABLE_ASSERT","-m64")
-        cppFlags += arrayOf("-std=c++11", "-fexceptions", "-DB2_ENABLE_ASSERT","-m64")
+        cFlags += arrayOf("-std=c17", "-fexceptions", "-DB2_ENABLE_ASSERT","-m64")
+        cppFlags += arrayOf("-std=c++17", "-fexceptions", "-DB2_ENABLE_ASSERT","-m64")
         libraries += file("build/box2d/${combined}/libs/libbox2d.a").absolutePath
     }
 
